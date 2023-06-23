@@ -1,0 +1,2 @@
+# NeuralAnimeFaceLineGuider
+ディープラーニングの試験だったり、準備だったりを色々やるやつ。
