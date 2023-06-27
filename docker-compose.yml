@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  nvidia_docker:
+    build:
+      context: .
+      shm_size: '10gb'
+    shm_size: '10gb'
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    tty: true
+    restart: always
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/root
+      - /home/dataset:/root/dataset
+      - ~/GoogleDrive:/root/GoogleDrive
+
+    working_dir: /root
+    command: ["/bin/bash"]
+
