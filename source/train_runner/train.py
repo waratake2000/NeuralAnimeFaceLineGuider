@@ -46,7 +46,7 @@ def import_class_from_file(dir_path):
     if not classes:
         raise Exception(f"No classes found in {module_name}")
     # 最初のクラスを取得します
-    class_ = classes[1][1]
+    class_ = classes[0][1]
 
     return class_
 

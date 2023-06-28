@@ -97,7 +97,7 @@ class BasicBlock(nn.Module):
 
 #         return out
 
-class FaceKeypointModel(nn.Module):
+class ResNet(nn.Module):
     def __init__(self, block, layers, num_classes=120):
         super().__init__()
 
@@ -153,3 +153,5 @@ class FaceKeypointModel(nn.Module):
 
         return x
 
+def resnet18():
+    return ResNet(BasicBlock, [2, 2, 2, 2])
