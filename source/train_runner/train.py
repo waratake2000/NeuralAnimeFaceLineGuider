@@ -42,10 +42,11 @@ def import_class_from_file(dir_path):
 
     # モジュール内のクラスのリストを取得します
     classes = [member for member in inspect.getmembers(module, inspect.isclass) if member[1].__module__ == module_name]
+    print(classes)
     if not classes:
         raise Exception(f"No classes found in {module_name}")
     # 最初のクラスを取得します
-    class_ = classes[0][1]
+    class_ = classes[1][1]
 
     return class_
 
@@ -383,7 +384,7 @@ def main():
     FaceKeypointModel = import_class_from_file(MODEL_FILE)
 
     model = FaceKeypointModel().to(config.DEVICE)
-    # print(model)
+    print(model)
     optimizer = optim.Adam(model.parameters(), lr=LR)
     criterion = nn.MSELoss()
 

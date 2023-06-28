@@ -18,9 +18,9 @@ services:
     ports:
       - "8501:8501"
     volumes:
-      - .:/root
+      - ./:/root
       - /home/dataset:/root/dataset
-      - ~/GoogleDrive:/root/GoogleDrive
+      - /home/nitstu/Cloud/:/root/Cloud
 
     working_dir: /root
     command: ["/bin/bash"]

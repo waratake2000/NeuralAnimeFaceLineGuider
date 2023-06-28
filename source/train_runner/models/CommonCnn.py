@@ -8,7 +8,7 @@ class FaceKeypointModel(nn.Module):
         self.conv2 = nn.Conv2d(32,64,kernel_size=3)
         self.conv3 = nn.Conv2d(64,128,kernel_size=3)
 
-        self.fc1 = nn.Linear(128,18)
+        self.fc1 = nn.Linear(128,120)
         self.pool = nn.MaxPool2d(2,2)
         self.dropout = nn.Dropout2d(p=0.2)
 
