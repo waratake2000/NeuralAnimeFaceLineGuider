@@ -25,6 +25,7 @@ import psutil
 import GPUtil as GPU
 import csv
 
+from resnet18 import resnet18
 from device_info_writer import all_device_info_csv_writer
 import config
 
@@ -86,20 +87,28 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         if aug_data_num == 0:
             continue
 
+        # kps = KeypointsOnImage(
+        #     [
+        #         Keypoint(x=keypoints[0][0], y=keypoints[0][1]),
+        #         Keypoint(x=keypoints[1][0], y=keypoints[1][1]),
+        #         Keypoint(x=keypoints[2][0], y=keypoints[2][1]),
+        #         Keypoint(x=keypoints[3][0], y=keypoints[3][1]),
+        #         Keypoint(x=keypoints[4][0], y=keypoints[4][1]),
+        #         Keypoint(x=keypoints[5][0], y=keypoints[5][1]),
+        #         Keypoint(x=keypoints[6][0], y=keypoints[6][1]),
+        #         Keypoint(x=keypoints[7][0], y=keypoints[7][1]),
+        #         Keypoint(x=keypoints[8][0], y=keypoints[8][1]),
+        #     ],
+        #     shape=image.shape,
+        # )
+
+        landmark_num = 60
         kps = KeypointsOnImage(
-            [
-                Keypoint(x=keypoints[0][0], y=keypoints[0][1]),
-                Keypoint(x=keypoints[1][0], y=keypoints[1][1]),
-                Keypoint(x=keypoints[2][0], y=keypoints[2][1]),
-                Keypoint(x=keypoints[3][0], y=keypoints[3][1]),
-                Keypoint(x=keypoints[4][0], y=keypoints[4][1]),
-                Keypoint(x=keypoints[5][0], y=keypoints[5][1]),
-                Keypoint(x=keypoints[6][0], y=keypoints[6][1]),
-                Keypoint(x=keypoints[7][0], y=keypoints[7][1]),
-                Keypoint(x=keypoints[8][0], y=keypoints[8][1]),
-            ],
+            [Keypoint(x=keypoints[landmark_num][0], y=keypoints[landmark_num][1]) for i in range(len(keypoints))],
             shape=image.shape,
         )
+
+        print("kps",kps)
 
         # About Augment setting
         seq = iaa.Sequential(
@@ -121,6 +130,7 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         )
 
         for aug_count in range(aug_data_num):
+            print("データ拡張を行います")
             image_aug, kps_aug = seq(image=image, keypoints=kps)
             keypoints = []
             for i in range(len(kps.keypoints)):
@@ -381,9 +391,11 @@ def main():
     valid_loader = DataLoader(valid_tensor_data, batch_size=BATCH_SIZE, shuffle=True)
 
     # モジュール内のクラスを取得
-    FaceKeypointModel = import_class_from_file(MODEL_FILE)
+    # FaceKeypointModel = import_class_from_file(MODEL_FILE)
 
-    model = FaceKeypointModel().to(config.DEVICE)
+    # model = FaceKeypointModel().to(config.DEVICE)
+    model = resnet18().to(config.DEVICE)
+
     print(model)
     optimizer = optim.Adam(model.parameters(), lr=LR)
     criterion = nn.MSELoss()
@@ -547,24 +559,6 @@ def main():
         writer = csv.writer(f)
         # writer.writerow(param_lsit)
         writer.writerow(paramd_data)
-
-
-    # # 50エポック毎のモデル及び誤差量
-    # loss_per_50epoch_csv = 'loss_per_50epoch.csv'
-    # loss_per_50epoch_path = f"{info_dir_path}/{loss_per_50epoch_csv}"
-    # loss_per_50epoch_header = ["MODEL_PTH","TRAIN_EPOCH_LOSS","VAL_EPOCH_LOSS"]
-
-    # # ファイルが存在しない場合のみ新たに作成
-    # if not os.path.exists(loss_per_50epoch_path):
-    #     with open(loss_per_50epoch_path, 'w') as f:
-    #         writer = csv.writer(f)
-    #         # ヘッダ行を書き込みます（必要に応じて修正してください）
-    #         writer.writerow(loss_per_50epoch_header)
-
-    # with open(loss_per_50epoch_path, "a") as f:
-    #     writer = csv.writer(f)
-    #     # writer.writerow(param_lsit)
-    #     writer.writerow(loss_per_50epoch)
 
     print("DONE TRAINING")
 

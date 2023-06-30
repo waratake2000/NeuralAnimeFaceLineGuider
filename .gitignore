@@ -15,7 +15,7 @@ valid_images/
 .gdfuse/
 .ipython/
 .local/
-
+nohup.out
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
