@@ -11,6 +11,10 @@ id_git_container.pub
 valid_images/
 *.jpg
 *.png
+.dotnet/
+.gdfuse/
+.ipython/
+.local/
 
 
 # Byte-compiled / optimized / DLL files
