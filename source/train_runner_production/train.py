@@ -160,7 +160,7 @@ def main():
             val_epoch_loss,
         )
 
-        model_test_freq = 30
+        model_test_freq = 100
         if (epoch)  % model_test_freq == 0 and epoch != 0:
             wait_data = f"model_epoch_{epoch}.pth"
             loss_per_50epoch.append([wait_data,train_epoch_loss,val_epoch_loss])

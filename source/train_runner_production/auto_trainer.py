@@ -1,5 +1,5 @@
 import subprocess
-from train_test_split import train_test_split
+from load_dataset import train_test_split
 import config
 
 # 約数を出力する関数
