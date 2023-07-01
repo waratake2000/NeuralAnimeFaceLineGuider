@@ -24,12 +24,12 @@ def model_test(model,model_path,dataset_path,image_list,save_image_dir):
             outputs = outputs.cpu().detach().numpy()
             outputs = outputs.reshape(-1, 2)
             # keypoints = keypoints.reshape(-1, 2)
-            # keypoints = outputs * [shape_x,shape_y]
+            keypoints = outputs * [config.RESIZE,config.RESIZE]
             # plt.subplot(3, 4, i+1)
             plt.imshow(orig_image, cmap='gray')
-            for p in range(outputs.shape[0]):
-                    plt.plot(outputs[p, 0], outputs[p, 1], 'r.')
-                    plt.text(outputs[p, 0], outputs[p, 1], f"{p}")
+            for p in range(keypoints.shape[0]):
+                plt.plot(keypoints[p, 0], keypoints[p, 1], 'r.')
+                plt.text(keypoints[p, 0], keypoints[p, 1], f"{p}")
             plt.axis('off')
             plt.savefig(f"{save_image_dir}/valid_{image_name}")
             plt.show()

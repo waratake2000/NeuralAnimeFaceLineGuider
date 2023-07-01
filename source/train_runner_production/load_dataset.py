@@ -32,8 +32,8 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
     for data_num in range(training_samples.shape[0]):
         image = cv2.imread(f"{data_path}/{training_samples.iloc[data_num, 0]}")
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = cv2.resize(image, (config.RESIZE, config.RESIZE))
         orig_h, orig_w, _ = image.shape
+        image = cv2.resize(image, (config.RESIZE, config.RESIZE))
         # print(type(image))
         # 画像を表示
 
@@ -41,7 +41,8 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         keypoints = training_samples.iloc[data_num][1:]
         keypoints = np.array(keypoints, dtype="float32")
         keypoints = keypoints.reshape(-1, 2)
-        keypoints = keypoints * [config.RESIZE / (orig_w), config.RESIZE / (orig_h)]
+        # keypoints = keypoints * [config.RESIZE / (orig_w), config.RESIZE / (orig_h)]
+        keypoints = keypoints * [1 / (orig_w), 1 / (orig_h)]
         print(keypoints)
         # keypoints = keypoints * [config.RESIZE / orig_w, config.RESIZE / orig_h]
 
