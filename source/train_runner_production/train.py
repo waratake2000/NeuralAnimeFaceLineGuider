@@ -160,7 +160,7 @@ def main():
             val_epoch_loss,
         )
 
-        model_test_freq = 100
+        model_test_freq = 30
         if (epoch)  % model_test_freq == 0 and epoch != 0:
             wait_data = f"model_epoch_{epoch}.pth"
             loss_per_50epoch.append([wait_data,train_epoch_loss,val_epoch_loss])
@@ -199,7 +199,7 @@ def main():
 
             model_test(model,model_path,f"{config.DATASET_PATH}/images",valid_image_names,f"{valid_images_dir_path}")
 
-        write_graph_freq = 30
+        write_graph_freq = 1000
         if (epoch)  % write_graph_freq == 0 and epoch != 0:
             save_loss_graph_dir = f"{info_dir_path}/loss_graph"
             if not os.path.exists(save_loss_graph_dir):

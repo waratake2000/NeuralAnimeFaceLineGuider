@@ -16,11 +16,11 @@ training_data_coutns = len(training_samples)
 train_data_len_divisors = division_patterns(training_data_coutns)
 print(train_data_len_divisors)
 
-for batch_size in train_data_len_divisors[0:2]:
+for batch_size in train_data_len_divisors:
     # for data_aug_factor in range(0,4):
     try:
         # python3 train.py --EPOCHS 2000 --BATCH_SIZE 1 --LR 0.0001 --MODEL_FILE ./models/CommonCnn.py --DATA_AUG_FAC 0
-        command = ["python3", "train.py", "--EPOCHS", "2000", "--BATCH_SIZE", f"{batch_size}", "--LR", "0.0001", "--MODEL_FILE", "deepCNN", "--DATA_AUG_FAC", "0"]
+        command = ["python3", "train.py", "--EPOCHS", "20000", "--BATCH_SIZE", f"{batch_size}", "--LR", "0.0001", "--MODEL_FILE", "deepCNN", "--DATA_AUG_FAC", "0"]
         subprocess.run(command)
     except:
         continue
