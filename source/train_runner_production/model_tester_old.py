@@ -13,7 +13,7 @@ def model_test(model,model_path,dataset_path,image_list,save_image_dir):
             image = cv2.imread(f"{dataset_path}/{image_name}")
             image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
             orig_image = image.copy()
-            shape_y,shape_x,_ = orig_image.shape
+            shape_y,shape_x,_ = image.shape
             image = cv2.resize(image, (config.RESIZE, config.RESIZE))
             # shape_x,shape_y,_ = image.shape
 

@@ -140,10 +140,7 @@ def main():
         # ラップタイムを計算する
         end_time = dt.datetime.now()
         lap_time = end_time - epoch_start_time
-        # print(lap_time)
         lap_times.append(lap_time)
-        print("残り推定学習時間：",lap_time * (EPOCHS - epoch))
-
 
         #トータルタイムを計算する
         total_time = time.time() - start_time
@@ -160,9 +157,8 @@ def main():
             val_epoch_loss,
         )
 
-        model_test_freq = 100
-        if (epoch)  % model_test_freq == 0 and epoch != 0:
-            wait_data = f"model_epoch_{epoch}.pth"
+        if (epoch + 1)  % 50 == 0:
+            wait_data = f"model_epoch_{epoch + 1}.pth"
             loss_per_50epoch.append([wait_data,train_epoch_loss,val_epoch_loss])
 
             model_path = f"{info_dir_path}/models/{wait_data}"
@@ -172,7 +168,7 @@ def main():
             print(f"Val Loss: {val_epoch_loss:.4f}")
             torch.save(
                 {
-                    "epoch": epoch,
+                    "epoch": epoch + 1,
                     "model_state_dict": model.state_dict(),
                     "optimizer_state_dict": optimizer.state_dict(),
                     "loss": criterion,
@@ -192,57 +188,20 @@ def main():
             if not os.path.exists(save_valid_images_dir):
                 os.makedirs(save_valid_images_dir)
 
-            valid_images_dir = f"epoch_{epoch}"
+            valid_images_dir = f"epoch_{epoch + 1}"
             valid_images_dir_path = f"{save_valid_images_dir}/{valid_images_dir}"
             if not os.path.exists(valid_images_dir_path):
                 os.makedirs(valid_images_dir_path)
 
             model_test(model,model_path,f"{config.DATASET_PATH}/images",valid_image_names,f"{valid_images_dir_path}")
 
-        write_graph_freq = 100
-        if (epoch)  % write_graph_freq == 0 and epoch != 0:
-            save_loss_graph_dir = f"{info_dir_path}/loss_graph"
-            if not os.path.exists(save_loss_graph_dir):
-                os.makedirs(save_loss_graph_dir)
-            plt.figure(figsize=(10, 7))
-            plt.plot(train_loss, color="orange", label="train loss")
-            plt.plot(val_loss, color="red", label="validation loss")
-
-            plt.xlabel("Epochs")
-            plt.ylabel("Loss")
-            epoch_loss_max = max(max(train_loss[epoch-write_graph_freq:]),max(val_loss[epoch-write_graph_freq:])) * 1.2
-            # epoch_loss_min = min(min(train_loss),min(val_loss)) * 0.8
-            plt.ylim([0, epoch_loss_max])
-            plt.xlim([epoch-int(write_graph_freq*1.2), epoch+5])
-            plt.legend()
-            plt.savefig(f"{save_loss_graph_dir}/loss_{epoch-write_graph_freq}_{epoch}.png")
-
     plt.figure(figsize=(10, 7))
     plt.plot(train_loss, color="orange", label="train loss")
     plt.plot(val_loss, color="red", label="validation loss")
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
-    # plt.ylim([0, 0.1])
     plt.legend()
-    plt.savefig(f"{info_dir_path}/loss_all.png")
-
-    plt.figure(figsize=(10, 7))
-    plt.plot(train_loss, color="orange", label="train loss")
-    plt.plot(val_loss, color="red", label="validation loss")
-    plt.xlabel("Epochs")
-    plt.ylabel("Loss")
-    plt.ylim([0, 0.1])
-    plt.legend()
-    plt.savefig(f"{info_dir_path}/loss_0.1.png")
-
-    plt.figure(figsize=(10, 7))
-    plt.plot(train_loss, color="orange", label="train loss")
-    plt.plot(val_loss, color="red", label="validation loss")
-    plt.xlabel("Epochs")
-    plt.ylabel("Loss")
-    plt.ylim([0, 0.05])
-    plt.legend()
-    plt.savefig(f"{info_dir_path}/loss_0.05.png")
+    plt.savefig(f"{info_dir_path}/loss.png")
 
     elapsed_time = time.time() - start_time
     elapsed_time_hms = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
