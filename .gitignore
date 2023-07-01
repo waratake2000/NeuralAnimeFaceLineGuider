@@ -16,6 +16,7 @@ valid_images/
 .ipython/
 .local/
 nohup.out
+core
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
