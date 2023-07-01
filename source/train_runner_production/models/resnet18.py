@@ -101,5 +101,5 @@ class ResNet(nn.Module):
         x = self.fc(x)
         return x
 
-def resnet18():
-    return ResNet(BasicBlock, [1, 1, 1, 1])
+def LandmarkDetector():
+    return ResNet(BasicBlock, [2, 2, 2, 2])
