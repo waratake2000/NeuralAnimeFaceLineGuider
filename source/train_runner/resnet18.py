@@ -26,7 +26,7 @@ class BasicBlock(nn.Module):
         self,
         in_channels,
         channels,
-        stride=1
+        stride=1,
     ):
         super().__init__()
         self.conv1 = conv3x3(in_channels, channels, stride)
@@ -58,45 +58,6 @@ class BasicBlock(nn.Module):
 
         return out
 
-# class Bottleneck(nn.Module):
-#     expansion = 4
-
-#     def __init__(self,in_channels, channels, stride=1):
-#         super().__init=_()
-#         self.conv1 = conv1x1(in_channels, channels)
-#         self.bn1 = nn.BatchNorm2d(channels)
-#         self.conv2 = conv3x3(channels, channels, stride)
-#         self.bn2 = nn.BatchNorm2d(channels)
-#         self.conv3 = conv1x1(channels, channels * self.expansion)
-#         self.bn3 = nn.BatchNorm2d(channels * self.expansion)
-#         self.relu = nn.ReLU(inplace=True)
-
-#         if in_channels != channels * self.expansion:
-#             self.shortcut = nn.Sequential(
-#                 conv1x1(in_channels, channels * self.expansion, stride),
-#                 nn.BatchNorm2d(channels * self.expansion),
-#             )
-#         else:
-#             self.shortcut = nn.Sequential()
-
-#     def forward(self,x):
-#         out = self.conv1(x)
-#         out = self.bn1(out)
-#         out = self.relu(out)
-
-#         out = self.conv2(out)
-#         out = self.bn2(out)
-#         out = self.relu(out)
-
-#         out = self.conv3(out)
-#         out = self.bn3(out)
-
-#         out += self.shortcut(x)
-
-#         out = self.relu(out)
-
-#         return out
-
 class ResNet(nn.Module):
     def __init__(self, block, layers, num_classes=120):
         super().__init__()
@@ -113,7 +74,7 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.avgpool = nn.AdaptiveAvgPool2d((1,1))
-        self.fc = nn.Linear(512 * block.expantion, num_classes)
+        self.fc = nn.Linear(512 * block.expansion, num_classes)
 
         # 重みを初期化する。
         for m in self.modules():
@@ -153,5 +114,5 @@ class ResNet(nn.Module):
 
         return x
 
-def resnet18():
-    return ResNet(BasicBlock, [2, 2, 2, 2])
+# def resnet18():
+#     return ResNet(BasicBlock, [2, 2, 2, 2])
