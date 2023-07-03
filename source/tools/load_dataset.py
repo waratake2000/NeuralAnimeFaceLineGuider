@@ -43,7 +43,7 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         keypoints = keypoints.reshape(-1, 2)
         # keypoints = keypoints * [config.RESIZE / (orig_w), config.RESIZE / (orig_h)]
         keypoints = keypoints * [1 / (orig_w), 1 / (orig_h)]
-        print(keypoints)
+        # print(keypoints)
         # keypoints = keypoints * [config.RESIZE / orig_w, config.RESIZE / orig_h]
 
         data_set_list.append([image, keypoints])
@@ -68,7 +68,7 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         # )
 
         landmark_num = len(keypoints)
-        print("landmark_num",landmark_num)
+        # print("landmark_num",landmark_num)
         kps = KeypointsOnImage(
             [Keypoint(x=keypoints[i][0], y=keypoints[i][1]) for i in range(0,landmark_num)],
             shape=image.shape,
@@ -87,8 +87,8 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
             ]
         )
 
-        for aug_count in range(aug_data_num):
-            print("データ拡張を行います")
+        for aug_count in range(aug_data_num-1):
+            # print("データ拡張を行います")
             image_aug, kps_aug = seq(image=image, keypoints=kps)
             keypoints = []
             for i in range(len(kps.keypoints)):
@@ -108,6 +108,7 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
             # plt.imshow(image_after)
             # plt.scatter(keypoints[:,0], keypoints[:,1], color='r')
             # plt.show()
+    print("len(data_set_list)",len(data_set_list))
     return data_set_list
 
 

@@ -120,7 +120,7 @@ def main():
     BEST_TRAIN_LOSS_MODEL = ""
     BEST_VALID_LOSS_MODEL = ""
 
-    for epoch in range(EPOCHS):
+    for epoch in range(0,int(EPOCHS)+1):
         print(f"Epoch {epoch+1} of {EPOCHS}")
         # 開始時刻及びフォーマット
         epoch_start_time = dt.datetime.now()
@@ -184,7 +184,7 @@ def main():
                 BEST_TRAIN_LOSS_MODEL = wait_data
 
             if BEST_VAL_LOSS > float(val_epoch_loss):
-                BEST_VAL_LOSS = float(train_epoch_loss)
+                BEST_VAL_LOSS = float(val_epoch_loss)
                 BEST_VALID_LOSS_MODEL = wait_data
 
             # validationデータをつかってモデルのテストを行う
