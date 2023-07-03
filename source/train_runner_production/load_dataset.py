@@ -67,30 +67,23 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         #     shape=image.shape,
         # )
 
-        landmark_num = 60
+        landmark_num = len(keypoints)
+        print("landmark_num",landmark_num)
         kps = KeypointsOnImage(
-            [Keypoint(x=keypoints[landmark_num][0], y=keypoints[landmark_num][1]) for i in range(len(keypoints))],
+            [Keypoint(x=keypoints[i][0], y=keypoints[i][1]) for i in range(0,landmark_num)],
             shape=image.shape,
         )
 
-        print("kps",kps)
+        # print("kps",kps)
 
         # About Augment setting
         seq = iaa.Sequential(
             [
-                iaa.ShearX((-30, 30)),
-                iaa.Multiply((0.8, 1.3)),  # change brightness, doesn't affect keypoints
                 iaa.Affine(
-                    rotate=(-50, 50),
-                    scale={"x": (0.5, 1.2), "y": (0.5, 1.2)},
-                    cval=(10, 255),
+                    rotate=(-80, 80),# 右、左回りに80度回転させる
+                    scale={"x": (0.5, 1.2), "y": (0.5, 1.2)},# x軸y軸それぞれずらす
                 ),
-                iaa.Invert(0.05, per_channel=0.5),
-                iaa.Fliplr(0.5),
-                iaa.RemoveSaturation((0, 0.5)),
-                iaa.AddToHueAndSaturation((-50, 50), per_channel=True),
-                iaa.UniformColorQuantizationToNBits(),
-                iaa.AdditiveGaussianNoise(scale=[0, 10]),
+                iaa.Fliplr(0.5), # 50%の確率で画像を反転させる
             ]
         )
 
