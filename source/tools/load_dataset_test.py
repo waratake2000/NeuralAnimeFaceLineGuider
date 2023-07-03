@@ -42,11 +42,11 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         keypoints = np.array(keypoints, dtype="float32")
         keypoints = keypoints.reshape(-1, 2)
         # keypoints = keypoints * [config.RESIZE / (orig_w), config.RESIZE / (orig_h)]
-        keypoints = keypoints * [1 / (orig_w), 1 / (orig_h)]
-        print(keypoints)
+        keypoints_per = keypoints * [1 / (orig_w), 1 / (orig_h)]
+        # print(keypoints)
         # keypoints = keypoints * [config.RESIZE / orig_w, config.RESIZE / orig_h]
 
-        data_set_list.append([image, keypoints])
+        data_set_list.append([image, keypoints_per])
 
         # データ拡張枚数が0枚の場合はデータ拡張の部分をスキップする
         if aug_data_num == 0:
@@ -67,35 +67,28 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         #     shape=image.shape,
         # )
 
-        landmark_num = 60
+        landmark_num = len(keypoints)
+        # print("landmark_num",landmark_num)
         kps = KeypointsOnImage(
-            [Keypoint(x=keypoints[landmark_num][0], y=keypoints[landmark_num][1]) for i in range(len(keypoints))],
+            [Keypoint(x=keypoints[i][0], y=keypoints[i][1]) for i in range(0,landmark_num)],
             shape=image.shape,
         )
 
-        print("kps",kps)
+        # print("kps",kps)
 
         # About Augment setting
         seq = iaa.Sequential(
             [
-                iaa.ShearX((-30, 30)),
-                iaa.Multiply((0.8, 1.3)),  # change brightness, doesn't affect keypoints
                 iaa.Affine(
-                    rotate=(-50, 50),
-                    scale={"x": (0.5, 1.2), "y": (0.5, 1.2)},
-                    cval=(10, 255),
+                    rotate=(-80, 80),# 右、左回りに80度回転させる
+                    scale={"x": (0.5, 1.2), "y": (0.5, 1.2)},# x軸y軸それぞれずらす
                 ),
-                iaa.Invert(0.05, per_channel=0.5),
-                iaa.Fliplr(0.5),
-                iaa.RemoveSaturation((0, 0.5)),
-                iaa.AddToHueAndSaturation((-50, 50), per_channel=True),
-                iaa.UniformColorQuantizationToNBits(),
-                iaa.AdditiveGaussianNoise(scale=[0, 10]),
+                iaa.Fliplr(0.5), # 50%の確率で画像を反転させる
             ]
         )
 
-        for aug_count in range(aug_data_num):
-            print("データ拡張を行います")
+        for aug_count in range(aug_data_num-1):
+            # print("データ拡張を行います")
             image_aug, kps_aug = seq(image=image, keypoints=kps)
             keypoints = []
             for i in range(len(kps.keypoints)):
@@ -104,17 +97,19 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
                 keypoints.append([after.x, after.y])
                 # print(after.x)
             keypoints = np.array(keypoints, dtype="float32")
+            keypoints_per = keypoints * [1 / (orig_w), 1 / (orig_h)]
             # print(keypoints)
 
             image_after = kps_aug.draw_on_image(image_aug, size=0)
 
             # データ拡張を行った画像をリストに格納する
-            data_set_list.append([image_after, keypoints])
+            data_set_list.append([image_after, keypoints_per])
 
             # 描画
             # plt.imshow(image_after)
             # plt.scatter(keypoints[:,0], keypoints[:,1], color='r')
             # plt.show()
+    print("len(data_set_list)",len(data_set_list))
     return data_set_list
 
 

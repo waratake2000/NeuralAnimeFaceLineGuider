@@ -42,11 +42,11 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         keypoints = np.array(keypoints, dtype="float32")
         keypoints = keypoints.reshape(-1, 2)
         # keypoints = keypoints * [config.RESIZE / (orig_w), config.RESIZE / (orig_h)]
-        keypoints_per = keypoints * [1 / (orig_w), 1 / (orig_h)]
+        keypoints = keypoints * [1 / (orig_w), 1 / (orig_h)]
         # print(keypoints)
         # keypoints = keypoints * [config.RESIZE / orig_w, config.RESIZE / orig_h]
 
-        data_set_list.append([image, keypoints_per])
+        data_set_list.append([image, keypoints])
 
         # データ拡張枚数が0枚の場合はデータ拡張の部分をスキップする
         if aug_data_num == 0:
@@ -97,13 +97,12 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
                 keypoints.append([after.x, after.y])
                 # print(after.x)
             keypoints = np.array(keypoints, dtype="float32")
-            keypoints_per = keypoints * [1 / (orig_w), 1 / (orig_h)]
             # print(keypoints)
 
             image_after = kps_aug.draw_on_image(image_aug, size=0)
 
             # データ拡張を行った画像をリストに格納する
-            data_set_list.append([image_after, keypoints_per])
+            data_set_list.append([image_after, keypoints])
 
             # 描画
             # plt.imshow(image_after)
