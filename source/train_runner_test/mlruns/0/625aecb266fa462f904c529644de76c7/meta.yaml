@@ -1,0 +1,16 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/625aecb266fa462f904c529644de76c7/artifacts
+deleted_time: 1688455096143
+end_time: 1688451557932
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 625aecb266fa462f904c529644de76c7
+run_name: skittish-perch-325
+run_uuid: 625aecb266fa462f904c529644de76c7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688451479129
+status: 3
+tags: []
+user_id: root
