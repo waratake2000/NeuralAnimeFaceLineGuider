@@ -1,5 +1,5 @@
 import subprocess
-from train_test_split import train_test_split
+from load_dataset import train_test_split
 import config
 
 # 約数を出力する関数
@@ -16,12 +16,12 @@ training_data_coutns = len(training_samples)
 train_data_len_divisors = division_patterns(training_data_coutns)
 print(train_data_len_divisors)
 
-for num,batch_size in enumerate(train_data_len_divisors[2:]):
-    print("num",num)
-    # for data_aug_factor in range(0,4):
-    try:
-        command = ["python3", "train.py", "--EPOCHS", "10000", "--BATCH_SIZE", f"{batch_size}", "--LR", "0.0001", "--MODEL_FILE", "./models/resnet18.py", "--DATA_AUG_FAC", "0"]
-        subprocess.run(command)
-    except:
-        continue
+for batch_size in train_data_len_divisors:
+    for data_aug_factor in range(0,4):
+        try:
+            # python3 train.py --EPOCHS 2000 --BATCH_SIZE 1 --LR 0.0001 --MODEL_FILE resnet18 --DATA_AUG_FAC 0
+            command = ["python3", "train.py", "--EPOCHS", "4001", "--BATCH_SIZE", f"{batch_size}", "--LR", "0.0001", "--MODEL_FILE", "resnet18", "--DATA_AUG_FAC", f"{data_aug_factor}"]
+            subprocess.run(command)
+        except:
+            continue
 

@@ -11,7 +11,12 @@ id_git_container.pub
 valid_images/
 *.jpg
 *.png
-
+.dotnet/
+.gdfuse/
+.ipython/
+.local/
+nohup.out
+core
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

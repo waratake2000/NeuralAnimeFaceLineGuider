@@ -12,12 +12,10 @@ def conv3x3(in_channels, out_channels, stride=1):
         bias=False,
     )
 
-
 def conv1x1(in_channels, out_channels, stride=1):
     return nn.Conv2d(
         in_channels, out_channels, kernel_size=1, stride=stride, bias=False
     )
-
 
 class BasicBlock(nn.Module):
     expansion = 1  # 出力のチャンネル数を入力のチャンネル数の何倍に拡大するか
@@ -48,21 +46,16 @@ class BasicBlock(nn.Module):
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-
         out = self.conv2(out)
         out = self.bn2(out)
-
         out += self.shortcut(x)
-
         out = self.relu(out)
-
         return out
 
 class ResNet(nn.Module):
     def __init__(self, block, layers, num_classes=120):
         super().__init__()
-
-        self.in_channels = 64
+        self.in_channels = 3
         self.conv1 = nn.Conv2d(
             3, self.in_channels, kernel_size=7, stride=2, padding=3, bias=False
         )
@@ -86,15 +79,12 @@ class ResNet(nn.Module):
 
     def _make_layer(self, block, channels, blocks, stride):
         layers = []
-
         # 最初の Residual Block
         layers.append(block(self.in_channels, channels, stride))
-
         # 残りの Residual Block
         self.in_channels = channels * block.expansion
         for _ in range(1, blocks):
             layers.append(block(self.in_channels, channels))
-
         return nn.Sequential(*layers)
 
     def forward(self, x):
@@ -102,17 +92,14 @@ class ResNet(nn.Module):
         x = self.bn1(x)
         x = self.relu(x)
         x = self.maxpool(x)
-
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
-
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc(x)
-
         return x
 
-# def resnet18():
-#     return ResNet(BasicBlock, [2, 2, 2, 2])
+def LandmarkDetector():
+    return ResNet(BasicBlock, [2, 2, 2, 2])
