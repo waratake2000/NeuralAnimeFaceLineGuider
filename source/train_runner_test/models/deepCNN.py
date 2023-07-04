@@ -46,3 +46,6 @@ class FaceMark7Net(nn.Module):
         # x = F.adaptive_avg_pool2d(x,1).reshape(bs,-1)
         x = self.fc3(x)
         return x
+
+def LandmarkDetector():
+    return FaceMark7Net()
