@@ -1,0 +1,15 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/f74ca61b7741487d996df9abd75ad0f0/artifacts
+end_time: 1688447432782
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: f74ca61b7741487d996df9abd75ad0f0
+run_name: resilient-elk-625
+run_uuid: f74ca61b7741487d996df9abd75ad0f0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688447428804
+status: 3
+tags: []
+user_id: root

@@ -1,0 +1,15 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/0fe917bb2bf14b3e95d14f65e1a77f04/artifacts
+end_time: 1688447079146
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 0fe917bb2bf14b3e95d14f65e1a77f04
+run_name: delicate-carp-977
+run_uuid: 0fe917bb2bf14b3e95d14f65e1a77f04
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688447075003
+status: 3
+tags: []
+user_id: root

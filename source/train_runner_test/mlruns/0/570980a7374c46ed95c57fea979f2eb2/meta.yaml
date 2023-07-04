@@ -1,0 +1,15 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/570980a7374c46ed95c57fea979f2eb2/artifacts
+end_time: 1688447008373
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 570980a7374c46ed95c57fea979f2eb2
+run_name: defiant-croc-59
+run_uuid: 570980a7374c46ed95c57fea979f2eb2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688447008369
+status: 3
+tags: []
+user_id: root

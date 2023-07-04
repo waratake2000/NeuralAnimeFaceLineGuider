@@ -1,0 +1,15 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/6c431b2c04c741cc86800d1b54449264/artifacts
+end_time: 1688447467070
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 6c431b2c04c741cc86800d1b54449264
+run_name: zealous-mole-672
+run_uuid: 6c431b2c04c741cc86800d1b54449264
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688447463135
+status: 3
+tags: []
+user_id: root

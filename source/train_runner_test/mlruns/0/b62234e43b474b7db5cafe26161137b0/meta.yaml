@@ -1,0 +1,15 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/b62234e43b474b7db5cafe26161137b0/artifacts
+end_time: 1688448022287
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: b62234e43b474b7db5cafe26161137b0
+run_name: blushing-deer-765
+run_uuid: b62234e43b474b7db5cafe26161137b0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688448022154
+status: 3
+tags: []
+user_id: root

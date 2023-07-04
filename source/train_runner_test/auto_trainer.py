@@ -20,7 +20,7 @@ for data_aug_factor in [2,5,10]:
     for batch_size in train_data_len_divisors[:6]:
         # print(batch_size)
         try:
-            # python3 train.py --EPOCHS 2000 --BATCH_SIZE 1 --LR 0.0001 --MODEL_FILE resnet18 --DATA_AUG_FAC
+            # python3 train.py --EPOCHS 2000 --BATCH_SIZE 1 --LR 0.0001 --MODEL_FILE resnet18 --DATA_AUG_FAC 0
             command = ["python3", "train.py", "--EPOCHS", "20000", "--BATCH_SIZE", f"{batch_size}", "--LR", "0.0001", "--MODEL_FILE", "resnet18", "--DATA_AUG_FAC", f"{data_aug_factor}"]
             subprocess.run(command)
         except:

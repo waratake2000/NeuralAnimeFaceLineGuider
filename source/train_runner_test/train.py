@@ -13,6 +13,8 @@ from datetime import datetime
 import datetime as dt
 import time
 
+import mlflow
+
 import csv
 
 import config
@@ -23,11 +25,23 @@ from model_fit_validate import fit
 from model_fit_validate import validate
 from model_tester import model_test
 
+import mlflow.pytorch
+
+
+
+
 
 plt.style.use("ggplot")
 
+pip_requirements = [
+    'torch==1.12.1+cu113',
+    # Other pip dependencies
+]
+
+# mlflow.pytorch.log_model("test_model", "models", pip_requirements=pip_requirements)
+
 def main():
-    start_time = time.time()
+    # start_time = time.time()
 
     # ex) python3 commandLIneHikisuu.py --EPOCHS 1 --BATCH_SIZE 2 --LR 0.001 --MODEL_FILE "./CommonCnn.py" --DATA_AUG_FAC 3
     parser = argparse.ArgumentParser(description="このスクリプトはディープラーニングを自動で実行するためのスクリプトです")
@@ -51,7 +65,7 @@ def main():
     MODEL_FILE = args.MODEL_FILE
     DATA_AUG_FAC = args.DATA_AUG_FAC
 
-    lap_times = []
+    # lap_times = []
 
     # 記録データを格納するディレクトリの作成
     # 日付と時間を年月日時分秒の形式にフォーマット
@@ -61,13 +75,13 @@ def main():
     print("info_dir_name",info_dir_name)
     # ディレクトリのパスを設定 (現在のスクリプトの位置に作成)
     # 今後記録はこのディレクトリに入れる
-    info_dir_path = os.path.join(config.ROOT_PATH, info_dir_name)
+    # info_dir_path = os.path.join(config.ROOT_PATH, info_dir_name)
 
     # ディレクトリを作成
-    os.makedirs(info_dir_path, exist_ok=True)
+    # os.makedirs(info_dir_path, exist_ok=True)
 
     # 指定のディレクトリにマシンの情報を記録する
-    all_device_info_csv_writer(f"{info_dir_path}/{now_str}_DeviceInfo.csv")
+    # all_device_info_csv_writer(f"{info_dir_path}/{now_str}_DeviceInfo.csv")
 
     # csvファイルを見て、トレーニングデータとバリデーションデータを分ける
     training_samples, valid_samples = load_dataset.train_test_split(
@@ -76,8 +90,8 @@ def main():
     )
 
     # テスト用の画像のリストを保存する
-    valid_image_names_df = valid_samples.iloc[:, 0]
-    valid_image_names = [name for name in valid_image_names_df]
+    # valid_image_names_df = valid_samples.iloc[:, 0]
+    # valid_image_names = [name for name in valid_image_names_df]
 
     # データ拡張を行い、numpyで返す
     train_numpy_dataset = load_dataset.AugmentFaceKeypointDataset(
@@ -93,8 +107,8 @@ def main():
 
     print("train_tensor_dataの数",len(train_tensor_data))
     print("valid_tensor_dataの数",len(valid_tensor_data))
-    NUM_OF_TRAIN_DATA = len(train_tensor_data)
-    NUM_OF_VALID_DATA = len(valid_tensor_data)
+    # NUM_OF_TRAIN_DATA = len(train_tensor_data)
+    # NUM_OF_VALID_DATA = len(valid_tensor_data)
 
     train_loader = DataLoader(train_tensor_data, batch_size=BATCH_SIZE, shuffle=True)
     valid_loader = DataLoader(valid_tensor_data, batch_size=BATCH_SIZE, shuffle=True)
@@ -104,6 +118,8 @@ def main():
     sys.path.append('./models')
     module = importlib.import_module(MODEL_FILE)
     model = module.LandmarkDetector().to(config.DEVICE)
+    # mlflow.pytorch.log_model(model, "models", pip_requirements=pip_requirements)
+
     # model = resnet18().to(config.DEVICE)
 
     print(model)
@@ -113,186 +129,214 @@ def main():
     train_loss = []
     val_loss = []
 
-    loss_per_50epoch = []
-    BEST_TRAIN_LOSS = float('inf')
-    BEST_VAL_LOSS = float('inf')
+    # loss_per_50epoch = []
+    # BEST_TRAIN_LOSS = float('inf')
+    # BEST_VAL_LOSS = float('inf')
 
-    BEST_TRAIN_LOSS_MODEL = ""
-    BEST_VALID_LOSS_MODEL = ""
+    # BEST_TRAIN_LOSS_MODEL = ""
+    # BEST_VALID_LOSS_MODEL = ""
 
+    # for epoch in range(0,int(EPOCHS)+1):
     for epoch in range(0,int(EPOCHS)+1):
         print(f"Epoch {epoch+1} of {EPOCHS}")
         # 開始時刻及びフォーマット
         epoch_start_time = dt.datetime.now()
-        formatted_epoch_start_time = epoch_start_time.strftime("%Y-%m-%d %H:%M:%S")
+        # formatted_epoch_start_time = epoch_start_time.strftime("%Y-%m-%d %H:%M:%S")
 
         train_epoch_loss = fit(
             model, train_loader, train_tensor_data, optimizer, criterion
         )
+
+        # train_result = {"TRAIN_LOSS":train_epoch_loss}
         val_epoch_loss = validate(model, valid_loader, valid_tensor_data, criterion)
         train_loss.append(train_epoch_loss)
         val_loss.append(val_epoch_loss)
 
-        if epoch % 100 == 0:
-            print(f"Train Loss: {train_epoch_loss:.4f}")
-            print(f"Val Loss: {val_epoch_loss:.4f}")
+
+        # with mlflow.start_run() as run:
+        #     # for key, value in train_result.items():
+        #     mlflow.log_metric(train_result.items()[0], train_result.items()[1])
+
+
+            # for key, value in vars(args).items():
+            #     mlflow.log_param(key, value)
+
+        # if epoch % 100 == 0:
+        #     print(f"Train Loss: {train_epoch_loss:.4f}")
+        #     print(f"Val Loss: {val_epoch_loss:.4f}")
 
         # ラップタイムを計算する
         end_time = dt.datetime.now()
         lap_time = end_time - epoch_start_time
         # print(lap_time)
-        lap_times.append(lap_time)
+        # lap_times.append(lap_time)
         print("残り推定学習時間：",lap_time * (EPOCHS - epoch))
 
 
         #トータルタイムを計算する
-        total_time = time.time() - start_time
+        # total_time = time.time() - start_time
         # 秒単位の時間をHH:MM:SSに変換
-        elapsed_total_time_hms = time.strftime("%H:%M:%S", time.gmtime(total_time))
+        # elapsed_total_time_hms = time.strftime("%H:%M:%S", time.gmtime(total_time))
 
-        record_progress_vram_information(
-            f"{info_dir_path}/{now_str}_LossInfo.csv",
-            epoch + 1,
-            formatted_epoch_start_time,
-            lap_time,
-            elapsed_total_time_hms,
-            train_epoch_loss,
-            val_epoch_loss,
-        )
 
-        model_test_freq = 100
-        if (epoch)  % model_test_freq == 0 and epoch != 0:
-            wait_data = f"model_epoch_{epoch}.pth"
-            loss_per_50epoch.append([wait_data,train_epoch_loss,val_epoch_loss])
+        # with mlflow.start_run() as run:
+        #     for key
 
-            model_path = f"{info_dir_path}/models/{wait_data}"
-            if not os.path.exists(f"{info_dir_path}/models"):
-                os.makedirs(f"{info_dir_path}/models")
-            print(f"Train Loss: {train_epoch_loss:.4f}")
-            print(f"Val Loss: {val_epoch_loss:.4f}")
-            torch.save(
-                {
-                    "epoch": epoch,
-                    "model_state_dict": model.state_dict(),
-                    "optimizer_state_dict": optimizer.state_dict(),
-                    "loss": criterion,
-                },
-                model_path
-            )
-            if BEST_TRAIN_LOSS > float(train_epoch_loss):
-                BEST_TRAIN_LOSS = float(train_epoch_loss)
-                BEST_TRAIN_LOSS_MODEL = wait_data
+        # record_progress_vram_information(
+        #     f"{info_dir_path}/{now_str}_LossInfo.csv",
+        #     epoch + 1,
+        #     formatted_epoch_start_time,
+        #     lap_time,
+        #     elapsed_total_time_hms,
+        #     train_epoch_loss,
+        #     val_epoch_loss,
+        # )
 
-            if BEST_VAL_LOSS > float(val_epoch_loss):
-                BEST_VAL_LOSS = float(val_epoch_loss)
-                BEST_VALID_LOSS_MODEL = wait_data
+        # model_test_freq = 100
+        # if (epoch)  % model_test_freq == 0 and epoch != 0:
+        #     wait_data = f"model_epoch_{epoch}.pth"
+        #     loss_per_50epoch.append([wait_data,train_epoch_loss,val_epoch_loss])
 
-            # validationデータをつかってモデルのテストを行う
-            save_valid_images_dir = f"{info_dir_path}/valid_images"
-            if not os.path.exists(save_valid_images_dir):
-                os.makedirs(save_valid_images_dir)
+        #     model_path = f"{info_dir_path}/models/{wait_data}"
+        #     if not os.path.exists(f"{info_dir_path}/models"):
+        #         os.makedirs(f"{info_dir_path}/models")
+        #     print(f"Train Loss: {train_epoch_loss:.4f}")
+        #     print(f"Val Loss: {val_epoch_loss:.4f}")
+        #     torch.save(
+        #         {
+        #             "epoch": epoch,
+        #             "model_state_dict": model.state_dict(),
+        #             "optimizer_state_dict": optimizer.state_dict(),
+        #             "loss": criterion,
+        #         },
+        #         model_path
+        #     )
+        #     if BEST_TRAIN_LOSS > float(train_epoch_loss):
+        #         BEST_TRAIN_LOSS = float(train_epoch_loss)
+        #         BEST_TRAIN_LOSS_MODEL = wait_data
 
-            valid_images_dir = f"epoch_{epoch}"
-            valid_images_dir_path = f"{save_valid_images_dir}/{valid_images_dir}"
-            if not os.path.exists(valid_images_dir_path):
-                os.makedirs(valid_images_dir_path)
+        #     if BEST_VAL_LOSS > float(val_epoch_loss):
+        #         BEST_VAL_LOSS = float(val_epoch_loss)
+        #         BEST_VALID_LOSS_MODEL = wait_data
 
-            model_test(model,model_path,f"{config.DATASET_PATH}/images",valid_image_names,f"{valid_images_dir_path}")
+        #     # validationデータをつかってモデルのテストを行う
+        #     save_valid_images_dir = f"{info_dir_path}/valid_images"
+        #     if not os.path.exists(save_valid_images_dir):
+        #         os.makedirs(save_valid_images_dir)
 
-        write_graph_freq = 1000
-        if (epoch)  % write_graph_freq == 0 and epoch != 0:
-            save_loss_graph_dir = f"{info_dir_path}/loss_graph"
-            if not os.path.exists(save_loss_graph_dir):
-                os.makedirs(save_loss_graph_dir)
-            plt.figure(figsize=(10, 7))
-            plt.plot(train_loss, color="orange", label="train loss")
-            plt.plot(val_loss, color="red", label="validation loss")
+        #     valid_images_dir = f"epoch_{epoch}"
+        #     valid_images_dir_path = f"{save_valid_images_dir}/{valid_images_dir}"
+        #     if not os.path.exists(valid_images_dir_path):
+        #         os.makedirs(valid_images_dir_path)
 
-            plt.xlabel("Epochs")
-            plt.ylabel("Loss")
-            epoch_loss_max = max(max(train_loss[epoch-write_graph_freq:]),max(val_loss[epoch-write_graph_freq:])) * 1.2
-            # epoch_loss_min = min(min(train_loss),min(val_loss)) * 0.8
-            plt.ylim([0, epoch_loss_max])
-            plt.xlim([epoch-int(write_graph_freq*1.2), epoch+5])
-            plt.legend()
-            plt.savefig(f"{save_loss_graph_dir}/loss_{epoch-write_graph_freq}_{epoch}.png")
+        #     model_test(model,model_path,f"{config.DATASET_PATH}/images",valid_image_names,f"{valid_images_dir_path}")
 
-    plt.figure(figsize=(10, 7))
-    plt.plot(train_loss, color="orange", label="train loss")
-    plt.plot(val_loss, color="red", label="validation loss")
-    plt.xlabel("Epochs")
-    plt.ylabel("Loss")
+        # write_graph_freq = 1000
+        # if (epoch)  % write_graph_freq == 0 and epoch != 0:
+        #     save_loss_graph_dir = f"{info_dir_path}/loss_graph"
+        #     if not os.path.exists(save_loss_graph_dir):
+        #         os.makedirs(save_loss_graph_dir)
+        #     plt.figure(figsize=(10, 7))
+        #     plt.plot(train_loss, color="orange", label="train loss")
+        #     plt.plot(val_loss , color="red", label="validation loss")
+
+        #     plt.xlabel("Epochs")
+        #     plt.ylabel("Loss")
+        #     epoch_loss_max = max(max(train_loss[epoch-write_graph_freq:]),max(val_loss[epoch-write_graph_freq:])) * 1.2
+        #     # epoch_loss_min = min(min(train_loss),min(val_loss)) * 0.8
+        #     plt.ylim([0, epoch_loss_max])
+        #     plt.xlim([epoch-int(write_graph_freq*1.2), epoch+5])
+        #     plt.legend()
+        #     plt.savefig(f"{save_loss_graph_dir}/loss_{epoch-write_graph_freq}_{epoch}.png")
+
+    with mlflow.start_run() as run:
+
+        for value in train_loss:
+            mlflow.log_metric("train_loss", value)
+
+        # for key, value in vars(args).items():
+        #     mlflow.log_param(key, value)
+
+        # mlflow.pytorch.log_model(model, 'model')
+        mlflow.pytorch.log_model(model, "models", pip_requirements=pip_requirements)
+
+
+    # plt.figure(figsize=(10, 7))
+    # plt.plot(train_loss, color="orange", label="train loss")
+    # plt.plot(val_loss, color="red", label="validation loss")
+    # plt.xlabel("Epochs")
+    # plt.ylabel("Loss")
+    # # plt.ylim([0, 0.1])
+    # plt.legend()
+    # plt.savefig(f"{info_dir_path}/loss_all.png")
+
+    # plt.figure(figsize=(10, 7))
+    # plt.plot(train_loss, color="orange", label="train loss")
+    # plt.plot(val_loss, color="red", label="validation loss")
+    # plt.xlabel("Epochs")
+    # plt.ylabel("Loss")
     # plt.ylim([0, 0.1])
-    plt.legend()
-    plt.savefig(f"{info_dir_path}/loss_all.png")
+    # plt.legend()
+    # plt.savefig(f"{info_dir_path}/loss_0.1.png")
 
-    plt.figure(figsize=(10, 7))
-    plt.plot(train_loss, color="orange", label="train loss")
-    plt.plot(val_loss, color="red", label="validation loss")
-    plt.xlabel("Epochs")
-    plt.ylabel("Loss")
-    plt.ylim([0, 0.1])
-    plt.legend()
-    plt.savefig(f"{info_dir_path}/loss_0.1.png")
+    # plt.figure(figsize=(10, 7))
+    # plt.plot(train_loss, color="orange", label="train loss")
+    # plt.plot(val_loss, color="red", label="validation loss")
+    # plt.xlabel("Epochs")
+    # plt.ylabel("Loss")
+    # plt.ylim([0, 0.05])
+    # plt.legend()
+    # plt.savefig(f"{info_dir_path}/loss_0.05.png")
 
-    plt.figure(figsize=(10, 7))
-    plt.plot(train_loss, color="orange", label="train loss")
-    plt.plot(val_loss, color="red", label="validation loss")
-    plt.xlabel("Epochs")
-    plt.ylabel("Loss")
-    plt.ylim([0, 0.05])
-    plt.legend()
-    plt.savefig(f"{info_dir_path}/loss_0.05.png")
-
-    elapsed_time = time.time() - start_time
-    elapsed_time_hms = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
+    # elapsed_time = time.time() - start_time
+    # elapsed_time_hms = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
 
     # csvファイルのヘッダの有無を確認
-    param_lsit = [
-        "MODEL_NAME",
-        "EXECUTED_EPOCHS",
-        "BATCH_SIZE",
-        "LR",
-        "NUM_OF_TRAIN_DATA",
-        "NUM_OF_VALID_DATA",
-        "IMAGE_SIZE",
-        "DATA_AUG_FAC",
-        "ELAPSED_TIME",
-        "BEST_TRAIN_LOSS",
-        "BEST_TRAIN_LOSS_MODEL",
-        "BEST_VALID_LOSS",
-        "BEST_VALID_LOSS_MODEL",
-        "RESULT_FILE"
-    ]
-    # ファイル名
-    result_csv = 'result.csv'
-    result_csv_path = f"{config.ROOT_PATH}/{result_csv}"
+    # param_lsit = [
+    #     "MODEL_NAME",
+    #     "EXECUTED_EPOCHS",
+    #     "BATCH_SIZE",
+    #     "LR",
+    #     "NUM_OF_TRAIN_DATA",
+    #     "NUM_OF_VALID_DATA",
+    #     "IMAGE_SIZE",
+    #     "DATA_AUG_FAC",
+    #     "ELAPSED_TIME",
+    #     "BEST_TRAIN_LOSS",
+    #     "BEST_TRAIN_LOSS_MODEL",
+    #     "BEST_VALID_LOSS",
+    #     "BEST_VALID_LOSS_MODEL",
+    #     "RESULT_FILE"
+    # ]
+    # # ファイル名
+    # result_csv = 'result.csv'
+    # result_csv_path = f"{config.ROOT_PATH}/{result_csv}"
 
-    # ファイルが存在しない場合のみ新たに作成
-    if not os.path.exists(result_csv_path):
-        with open(result_csv_path, 'w') as f:
-            writer = csv.writer(f)
-            # ヘッダ行を書き込みます
-            writer.writerow(param_lsit)
+    # # ファイルが存在しない場合のみ新たに作成
+    # if not os.path.exists(result_csv_path):
+    #     with open(result_csv_path, 'w') as f:
+    #         writer = csv.writer(f)
+    #         # ヘッダ行を書き込みます
+    #         writer.writerow(param_lsit)
 
-    paramd_data = [MODEL_FILE,
-                   EPOCHS,
-                   BATCH_SIZE,
-                   LR,
-                   NUM_OF_TRAIN_DATA,
-                   NUM_OF_VALID_DATA,
-                   config.RESIZE,
-                   DATA_AUG_FAC,
-                   elapsed_time_hms,
-                   BEST_TRAIN_LOSS,
-                   BEST_TRAIN_LOSS_MODEL,
-                   BEST_VAL_LOSS,
-                   BEST_VALID_LOSS_MODEL,
-                   info_dir_name]
+    # paramd_data = [MODEL_FILE,
+    #                EPOCHS,
+    #                BATCH_SIZE,
+    #                LR,
+    #                NUM_OF_TRAIN_DATA,
+    #                NUM_OF_VALID_DATA,
+    #                config.RESIZE,
+    #                DATA_AUG_FAC,
+    #                elapsed_time_hms,
+    #                BEST_TRAIN_LOSS,
+    #                BEST_TRAIN_LOSS_MODEL,
+    #                BEST_VAL_LOSS,
+    #                BEST_VALID_LOSS_MODEL,
+    #                info_dir_name]
 
-    with open(result_csv_path, "a") as f:
-        writer = csv.writer(f)
-        writer.writerow(paramd_data)
+    # with open(result_csv_path, "a") as f:
+    #     writer = csv.writer(f)
+    #     writer.writerow(paramd_data)
     print("DONE TRAINING")
 
 

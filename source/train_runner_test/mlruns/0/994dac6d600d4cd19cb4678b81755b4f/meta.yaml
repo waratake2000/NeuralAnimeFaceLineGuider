@@ -1,0 +1,15 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/994dac6d600d4cd19cb4678b81755b4f/artifacts
+end_time: 1688447006336
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 994dac6d600d4cd19cb4678b81755b4f
+run_name: whimsical-dove-199
+run_uuid: 994dac6d600d4cd19cb4678b81755b4f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688447006331
+status: 3
+tags: []
+user_id: root
