@@ -17,6 +17,7 @@ valid_images/
 .local/
 nohup.out
 core
+*.pth
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

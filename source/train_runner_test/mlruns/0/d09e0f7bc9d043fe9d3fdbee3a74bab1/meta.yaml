@@ -1,0 +1,16 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/d09e0f7bc9d043fe9d3fdbee3a74bab1/artifacts
+deleted_time: 1688451461232
+end_time: 1688451438418
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: d09e0f7bc9d043fe9d3fdbee3a74bab1
+run_name: sneaky-koi-584
+run_uuid: d09e0f7bc9d043fe9d3fdbee3a74bab1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688451428236
+status: 3
+tags: []
+user_id: root

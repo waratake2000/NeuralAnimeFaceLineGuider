@@ -13,10 +13,15 @@ def model_test(model,model_path,dataset_path,image_list,save_image_dir):
             image = cv2.imread(f"{dataset_path}/{image_name}")
             image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
             orig_image = image.copy()
+<<<<<<< HEAD
             shape_x,shape_y,_ = orig_image.shape
             image = cv2.resize(image, (config.RESIZE, config.RESIZE))
 
 
+=======
+            shape_y,shape_x,_ = orig_image.shape
+            image = cv2.resize(image, (config.RESIZE, config.RESIZE))
+>>>>>>> 28d0d30922216fbaf1aa4e601471242c506f2444
             image = image / 255.0
             image = np.transpose(image, (2, 0, 1))
             image = torch.tensor(image, dtype=torch.float)

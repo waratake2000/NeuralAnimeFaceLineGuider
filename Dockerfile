@@ -24,4 +24,5 @@ RUN pip3 install seaborn
 RUN pip3 install gputil
 RUN pip3 install imgaug
 RUN pip3 install psutil
-
+RUN pip3 install mlflow
+RUN pip3 install torchinfo

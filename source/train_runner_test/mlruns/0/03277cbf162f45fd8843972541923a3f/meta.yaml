@@ -1,0 +1,16 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/03277cbf162f45fd8843972541923a3f/artifacts
+deleted_time: 1688451314049
+end_time: 1688451299950
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 03277cbf162f45fd8843972541923a3f
+run_name: intelligent-pug-263
+run_uuid: 03277cbf162f45fd8843972541923a3f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688451299849
+status: 3
+tags: []
+user_id: root

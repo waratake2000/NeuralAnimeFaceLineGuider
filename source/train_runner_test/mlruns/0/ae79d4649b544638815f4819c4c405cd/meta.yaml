@@ -1,0 +1,16 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/ae79d4649b544638815f4819c4c405cd/artifacts
+deleted_time: 1688452558764
+end_time: 1688452516419
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: ae79d4649b544638815f4819c4c405cd
+run_name: treasured-cod-307
+run_uuid: ae79d4649b544638815f4819c4c405cd
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688452516291
+status: 4
+tags: []
+user_id: root

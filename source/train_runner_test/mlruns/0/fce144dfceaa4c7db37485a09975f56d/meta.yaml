@@ -1,0 +1,16 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/fce144dfceaa4c7db37485a09975f56d/artifacts
+deleted_time: 1688451314687
+end_time: 1688451295282
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: fce144dfceaa4c7db37485a09975f56d
+run_name: blushing-mole-84
+run_uuid: fce144dfceaa4c7db37485a09975f56d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688451295277
+status: 3
+tags: []
+user_id: root

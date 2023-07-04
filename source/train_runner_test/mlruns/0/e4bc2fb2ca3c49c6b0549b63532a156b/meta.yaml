@@ -1,0 +1,16 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/e4bc2fb2ca3c49c6b0549b63532a156b/artifacts
+deleted_time: 1688451314570
+end_time: 1688451296030
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: e4bc2fb2ca3c49c6b0549b63532a156b
+run_name: lyrical-worm-209
+run_uuid: e4bc2fb2ca3c49c6b0549b63532a156b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688451296025
+status: 3
+tags: []
+user_id: root

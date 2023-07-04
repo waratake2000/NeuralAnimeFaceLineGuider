@@ -67,9 +67,16 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         #     shape=image.shape,
         # )
 
+<<<<<<< HEAD
         landmark_num = 59
         kps = KeypointsOnImage(
             [Keypoint(x=keypoints[landmark_num][0], y=keypoints[landmark_num][1]) for i in range(len(keypoints))],
+=======
+        landmark_num = len(keypoints)
+        # print("landmark_num",landmark_num)
+        kps = KeypointsOnImage(
+            [Keypoint(x=keypoints[i][0], y=keypoints[i][1]) for i in range(0,landmark_num)],
+>>>>>>> 28d0d30922216fbaf1aa4e601471242c506f2444
             shape=image.shape,
         )
 
@@ -78,6 +85,7 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         # About Augment setting
         seq = iaa.Sequential(
             [
+<<<<<<< HEAD
                 iaa.ShearX((-30, 30)),
                 iaa.Multiply((0.8, 1.3)),  # change brightness, doesn't affect keypoints
                 iaa.Affine(
@@ -95,6 +103,17 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         )
 
         for aug_count in range(aug_data_num):
+=======
+                iaa.Affine(
+                    rotate=(-80, 80),# 右、左回りに80度回転させる
+                    scale={"x": (0.5, 1.2), "y": (0.5, 1.2)},# x軸y軸それぞれずらす
+                ),
+                iaa.Fliplr(0.5), # 50%の確率で画像を反転させる
+            ]
+        )
+
+        for aug_count in range(aug_data_num-1):
+>>>>>>> 28d0d30922216fbaf1aa4e601471242c506f2444
             # print("データ拡張を行います")
             image_aug, kps_aug = seq(image=image, keypoints=kps)
             keypoints = []
@@ -115,6 +134,10 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
             # plt.imshow(image_after)
             # plt.scatter(keypoints[:,0], keypoints[:,1], color='r')
             # plt.show()
+<<<<<<< HEAD
+=======
+    print("len(data_set_list)",len(data_set_list))
+>>>>>>> 28d0d30922216fbaf1aa4e601471242c506f2444
     return data_set_list
 
 

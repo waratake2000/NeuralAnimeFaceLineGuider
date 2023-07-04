@@ -1,0 +1,16 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/9017c8f04a784e1b9ad97a0a3cc9d13f/artifacts
+deleted_time: 1688451314265
+end_time: 1688451298310
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 9017c8f04a784e1b9ad97a0a3cc9d13f
+run_name: efficient-croc-638
+run_uuid: 9017c8f04a784e1b9ad97a0a3cc9d13f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688451298305
+status: 3
+tags: []
+user_id: root

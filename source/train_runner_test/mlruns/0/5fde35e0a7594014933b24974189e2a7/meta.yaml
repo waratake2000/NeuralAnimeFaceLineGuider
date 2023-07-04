@@ -1,0 +1,16 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/0/5fde35e0a7594014933b24974189e2a7/artifacts
+deleted_time: 1688451314791
+end_time: 1688451294532
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 5fde35e0a7594014933b24974189e2a7
+run_name: defiant-newt-61
+run_uuid: 5fde35e0a7594014933b24974189e2a7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688451294527
+status: 3
+tags: []
+user_id: root
