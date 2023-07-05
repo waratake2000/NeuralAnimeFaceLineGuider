@@ -42,11 +42,7 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         keypoints = np.array(keypoints, dtype="float32")
         keypoints = keypoints.reshape(-1, 2)
         # keypoints = keypoints * [config.RESIZE / (orig_w), config.RESIZE / (orig_h)]
-<<<<<<< HEAD
-        keypoints = keypoints * [1 / (orig_w), 1 / (orig_h)]
-=======
         keypoints_per = keypoints * [1 / (orig_w), 1 / (orig_h)]
->>>>>>> 28d0d30922216fbaf1aa4e601471242c506f2444
         # print(keypoints)
         # keypoints = keypoints * [config.RESIZE / orig_w, config.RESIZE / orig_h]
 
@@ -71,12 +67,7 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         #     shape=image.shape,
         # )
 
-<<<<<<< HEAD
-        landmark_num = 59
-=======
         landmark_num = len(keypoints)
-        # print("landmark_num",landmark_num)
->>>>>>> 28d0d30922216fbaf1aa4e601471242c506f2444
         kps = KeypointsOnImage(
             [Keypoint(x=keypoints[i][0], y=keypoints[i][1]) for i in range(0,landmark_num)],
             shape=image.shape,
@@ -95,11 +86,7 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
             ]
         )
 
-<<<<<<< HEAD
-        for aug_count in range(aug_data_num):
-=======
         for aug_count in range(aug_data_num-1):
->>>>>>> 28d0d30922216fbaf1aa4e601471242c506f2444
             # print("データ拡張を行います")
             image_aug, kps_aug = seq(image=image, keypoints=kps)
             keypoints = []

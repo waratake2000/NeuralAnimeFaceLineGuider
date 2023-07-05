@@ -18,6 +18,8 @@ valid_images/
 nohup.out
 core
 *.pth
+Cloud/
+dataset/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

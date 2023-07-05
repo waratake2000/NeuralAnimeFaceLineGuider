@@ -13,20 +13,6 @@ def division_patterns(num):
 
 training_samples, _ = train_test_split(str(config.ANNOTATION_DATA),config.TEST_SPLIT)
 training_data_coutns = len(training_samples)
-<<<<<<< HEAD
-train_data_len_divisors = division_patterns(training_data_coutns)
-print(train_data_len_divisors)
-
-for batch_size in train_data_len_divisors:
-    for data_aug_factor in range(0,4):
-        try:
-            # python3 train.py --EPOCHS 2000 --BATCH_SIZE 1 --LR 0.0001 --MODEL_FILE resnet18 --DATA_AUG_FAC 0
-            command = ["python3", "train.py", "--EPOCHS", "4001", "--BATCH_SIZE", f"{batch_size}", "--LR", "0.0001", "--MODEL_FILE", "resnet18", "--DATA_AUG_FAC", f"{data_aug_factor}"]
-            subprocess.run(command)
-        except:
-            continue
-=======
->>>>>>> 28d0d30922216fbaf1aa4e601471242c506f2444
 
 # print(train_data_len_divisors)
 for data_aug_factor in [2,5,10]:
