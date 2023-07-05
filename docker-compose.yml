@@ -17,10 +17,12 @@ services:
     restart: always
     ports:
       - "8501:8501"
+      - "3000:3000"
+      - "5000:5000"
     volumes:
       - ./:/root
       - /home/dataset:/root/dataset
-      - /home/nitstu/Cloud/:/root/Cloud
+      - /home/Cloud/:/root/Cloud
 
     working_dir: /root
     command: ["/bin/bash"]
