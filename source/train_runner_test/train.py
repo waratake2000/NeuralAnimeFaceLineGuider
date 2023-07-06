@@ -27,10 +27,8 @@ from model_fit_validate import validate
 from model_tester import model_test
 
 import mlflow.pytorch
-
-
-
-
+from mlflow.tracking import MlflowClient
+from mlflow.utils.mlflow_tags import MLFLOW_RUN_NAME,MLFLOW_USER,MLFLOW_SOURCE_NAME
 
 plt.style.use("ggplot")
 
@@ -42,8 +40,6 @@ pip_requirements = [
 # mlflow.pytorch.log_model("test_model", "models", pip_requirements=pip_requirements)
 
 def main():
-
-
     # start_time = time.time()
 
     # ex) python3 commandLIneHikisuu.py --EPOCHS 1 --BATCH_SIZE 2 --LEARNING_RATE 0.001 --MODEL_FILE "./CommonCnn.py" --DATA_AUG_FAC 3
@@ -122,90 +118,6 @@ def main():
     module = importlib.import_module(MODEL_FILE)
     model = module.LandmarkDetector().to(config.DEVICE)
 
-    # param_lsit = [
-    #     "MODEL_NAME",
-    #     "EXECUTED_EPOCHS",
-    #     "BATCH_SIZE",
-    #     "LEARNING_RATE",
-    #     "NUM_OF_TRAIN_DATA",
-    #     "NUM_OF_VALID_DATA",
-    #     "IMAGE_SIZE",
-    #     "DATA_AUG_FAC",
-    #     "ELAPSED_TIME",
-    #     "BEST_TRAIN_LOSS",
-    #     "BEST_TRAIN_LOSS_MODEL",
-    #     "BEST_VALID_LOSS",
-    #     "BEST_VALID_LOSS_MODEL",
-    #     "RESULT_FILE"
-    # ]
-    # # ファイル名
-    # result_csv = 'result.csv'
-    # result_csv_path = f"{config.ROOT_PATH}/{result_csv}"
-
-    # # ファイルが存在しない場合のみ新たに作成
-    # if not os.path.exists(result_csv_path):
-    #     with open(result_csv_path, 'w') as f:
-    #         writer = csv.writer(f)
-    #         # ヘッダ行を書き込みます
-    #         writer.writerow(param_lsit)
-
-    # paramd_data = [MODEL_FILE,
-    #                 EPOCHS,
-    #                 BATCH_SIZE,
-    #                 LEARNING_RATE,
-    #                 NUM_OF_TRAIN_DATA,
-    #                 NUM_OF_VALID_DATA,
-    #                 config.RESIZE,
-    #                 DATA_AUG_FAC,
-    #                 elapsed_time_hms,
-    #                 BEST_TRAIN_LOSS,
-    #                 BEST_TRAIN_LOSS_MODEL,
-    #                 BEST_VAL_LOSS,
-    #                 BEST_VALID_LOSS_MODEL,
-    #                 info_dir_name]
-
-            # param_lsit = [
-        #     "MODEL_NAME",
-        #     "EXECUTED_EPOCHS",
-        #     "BATCH_SIZE",
-        #     "LEARNING_RATE",
-        #     "NUM_OF_TRAIN_DATA",
-        #     "NUM_OF_VALID_DATA",
-        #     "IMAGE_SIZE",
-        #     "DATA_AUG_FAC",
-        #     "ELAPSED_TIME",
-        #     "BEST_TRAIN_LOSS",
-        #     "BEST_TRAIN_LOSS_MODEL",
-        #     "BEST_VALID_LOSS",
-        #     "BEST_VALID_LOSS_MODEL",
-        #     "RESULT_FILE"
-        # ]
-        # # ファイル名
-        # result_csv = 'result.csv'
-        # result_csv_path = f"{config.ROOT_PATH}/{result_csv}"
-
-        # # ファイルが存在しない場合のみ新たに作成
-        # if not os.path.exists(result_csv_path):
-        #     with open(result_csv_path, 'w') as f:
-        #         writer = csv.writer(f)
-        #         # ヘッダ行を書き込みます
-        #         writer.writerow(param_lsit)
-
-        # paramd_data = [MODEL_FILE,
-        #                EPOCHS,
-        #                BATCH_SIZE,
-        #                LEARNING_RATE,
-        #                NUM_OF_TRAIN_DATA,
-        #                NUM_OF_VALID_DATA,
-        #                config.RESIZE,
-        #                DATA_AUG_FAC,
-        #                elapsed_time_hms,
-        #                BEST_TRAIN_LOSS,
-        #                BEST_TRAIN_LOSS_MODEL,
-        #                BEST_VAL_LOSS,
-        #                BEST_VALID_LOSS_MODEL,
-        #                info_dir_name]
-
     params_dict = {
         "MODEL":MODEL_FILE,
         "EPOCHS":EPOCHS,
@@ -215,16 +127,31 @@ def main():
         "IMAGE_SIZE":config.RESIZE,
         "RESULT_DATA_PATH":info_dir_path
     }
-    mlflow.set_experiment("Manga109")
+
+    tags = {
+            MLFLOW_RUN_NAME:"runの名前を決められるよ",
+            MLFLOW_USER:"ユーザーも決められるよ",
+            MLFLOW_SOURCE_NAME:"ソースも決められるよ",
+           }
+
+    client = MlflowClient()
+
+    mlflow.set_tracking_uri(config.MLRUNS_PATH)
+    experiment_id = mlflow.set_experiment("Manga109")
+    print(experiment_id)
+
+    # mlflow.set_experiment("Manga109")
+    # experiment_id = client.create_experiment("experiment_name3")
+
+    client.create_run(experiment_id,tags=tags)
+    # mlflow.log_artifact(info_dir_path)
 
     with mlflow.start_run(nested=True) as run:
-        mlflow.pytorch.log_model(model, "models")
+        # mlflow.pytorch.log_model(model, "models")
+        mlflow.pytorch.log_model(model, "models", pip_requirements=pip_requirements)
+
         for key, value in params_dict.items():
             mlflow.log_param(key, value)
-        # mlflow.log_param(key, value)
-        # mlflow.pytorch.log_model(model, "models", pip_requirements=pip_requirements)
-
-        # model = resnet18().to(config.DEVICE)
 
         print(model)
         optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
@@ -234,11 +161,6 @@ def main():
         val_loss = []
 
         loss_per_50epoch = []
-        # BEST_TRAIN_LOSS = float('inf')
-        # BEST_VAL_LOSS = float('inf')
-
-        # BEST_TRAIN_LOSS_MODEL = ""
-        # BEST_VALID_LOSS_MODEL = ""
 
         # for epoch in range(0,int(EPOCHS)+1):
         for epoch in range(0,int(EPOCHS)+1):
@@ -285,13 +207,6 @@ def main():
                     },
                     model_path
                 )
-                # if BEST_TRAIN_LOSS > float(train_epoch_loss):
-                #     BEST_TRAIN_LOSS = float(train_epoch_loss)
-                #     BEST_TRAIN_LOSS_MODEL = wait_data
-
-                # if BEST_VAL_LOSS > float(val_epoch_loss):
-                #     BEST_VAL_LOSS = float(val_epoch_loss)
-                #     BEST_VALID_LOSS_MODEL = wait_data
 
                 # validationデータをつかってモデルのテストを行う
                 save_valid_images_dir = f"{info_dir_path}/valid_images"
@@ -305,55 +220,6 @@ def main():
 
                 model_test(model,model_path,f"{config.DATASET_PATH}/images",valid_image_names,f"{valid_images_dir_path}")
 
-        # elapsed_time = time.time() - start_time
-        # elapsed_time_hms = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
-
-        # csvファイルのヘッダの有無を確認
-        # param_lsit = [
-        #     "MODEL_NAME",
-        #     "EXECUTED_EPOCHS",
-        #     "BATCH_SIZE",
-        #     "LEARNING_RATE",
-        #     "NUM_OF_TRAIN_DATA",
-        #     "NUM_OF_VALID_DATA",
-        #     "IMAGE_SIZE",
-        #     "DATA_AUG_FAC",
-        #     "ELAPSED_TIME",
-        #     "BEST_TRAIN_LOSS",
-        #     "BEST_TRAIN_LOSS_MODEL",
-        #     "BEST_VALID_LOSS",
-        #     "BEST_VALID_LOSS_MODEL",
-        #     "RESULT_FILE"
-        # ]
-        # # ファイル名
-        # result_csv = 'result.csv'
-        # result_csv_path = f"{config.ROOT_PATH}/{result_csv}"
-
-        # # ファイルが存在しない場合のみ新たに作成
-        # if not os.path.exists(result_csv_path):
-        #     with open(result_csv_path, 'w') as f:
-        #         writer = csv.writer(f)
-        #         # ヘッダ行を書き込みます
-        #         writer.writerow(param_lsit)
-
-        # paramd_data = [MODEL_FILE,
-        #                EPOCHS,
-        #                BATCH_SIZE,
-        #                LEARNING_RATE,
-        #                NUM_OF_TRAIN_DATA,
-        #                NUM_OF_VALID_DATA,
-        #                config.RESIZE,
-        #                DATA_AUG_FAC,
-        #                elapsed_time_hms,
-        #                BEST_TRAIN_LOSS,
-        #                BEST_TRAIN_LOSS_MODEL,
-        #                BEST_VAL_LOSS,
-        #                BEST_VALID_LOSS_MODEL,
-        #                info_dir_name]
-
-        # with open(result_csv_path, "a") as f:
-        #     writer = csv.writer(f)
-        #     writer.writerow(paramd_data)
         print("DONE TRAINING")
 
 

@@ -1,0 +1,16 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/977472988782813292/ae101f11bfdd4a4eafdd88aea0122d8f/artifacts
+deleted_time: null
+end_time: null
+entry_point_name: ''
+experiment_id: '977472988782813292'
+lifecycle_stage: active
+run_id: ae101f11bfdd4a4eafdd88aea0122d8f
+run_name: bold-ape-85
+run_uuid: ae101f11bfdd4a4eafdd88aea0122d8f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: experiment_name
+status: 1
+tags: []
+user_id: unknown

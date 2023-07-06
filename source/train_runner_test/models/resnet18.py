@@ -24,11 +24,7 @@ class BasicBlock(nn.Module):
         self,
         in_channels,
         channels,
-<<<<<<< HEAD
-        stride=1,
-=======
         stride=1
->>>>>>> baf8fecc72020f3d84b5d2c195d695184baec03e
     ):
         super().__init__()
         self.conv1 = conv3x3(in_channels, channels, stride)
@@ -105,20 +101,5 @@ class ResNet(nn.Module):
         x = self.fc(x)
         return x
 
-<<<<<<< HEAD:source/train_runner_test/resnet18.py
-<<<<<<< HEAD
-<<<<<<< HEAD:source/train_runner_test/resnet18.py
-# def resnet18():
-#     return ResNet(BasicBlock, [2, 2, 2, 2])
-=======
 def LandmarkDetector():
     return ResNet(BasicBlock, [2, 2, 2, 2])
->>>>>>> baf8fecc72020f3d84b5d2c195d695184baec03e:source/train_runner_production/models/resnet18.py
-=======
-def resnet18():
-    return ResNet(BasicBlock, [1, 1, 1, 1])
->>>>>>> baf8fecc72020f3d84b5d2c195d695184baec03e
-=======
-def LandmarkDetector():
-    return ResNet(BasicBlock, [2, 2, 2, 2])
->>>>>>> 28d0d30922216fbaf1aa4e601471242c506f2444:source/train_runner_test/models/resnet18.py
