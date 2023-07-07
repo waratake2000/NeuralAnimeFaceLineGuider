@@ -20,6 +20,7 @@ core
 *.pth
 Cloud/
 dataset/
+.python_history
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
