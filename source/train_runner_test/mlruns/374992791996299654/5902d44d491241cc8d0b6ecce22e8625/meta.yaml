@@ -1,0 +1,15 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/374992791996299654/5902d44d491241cc8d0b6ecce22e8625/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '374992791996299654'
+lifecycle_stage: active
+run_id: 5902d44d491241cc8d0b6ecce22e8625
+run_name: 2023_0707_1240_resnet18
+run_uuid: 5902d44d491241cc8d0b6ecce22e8625
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688701224766
+status: 1
+tags: []
+user_id: nitstu

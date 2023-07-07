@@ -9,6 +9,8 @@ from omegaconf import DictConfig, ListConfig
 class MlflowWriter():
     def __init__(self,experiment_name):
         self.client = MlflowClient()
+        # self.mlflow_ = mlflow()
+
         try:
             self.experiment_id = self.client.create_experiment(experiment_name)
         except Exception as e:

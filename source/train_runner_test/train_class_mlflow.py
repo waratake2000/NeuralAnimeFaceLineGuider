@@ -28,6 +28,7 @@ from model_fit_validate import fit
 from model_fit_validate import validate
 from model_tester import model_test
 
+import mlflow
 # import mlflow.pytorch
 # from mlflow.tracking import MlflowClient
 # from mlflow.utils.mlflow_tags import MLFLOW_RUN_NAME,MLFLOW_USER,MLFLOW_SOURCE_NAME
@@ -125,9 +126,13 @@ def main():
             MLFLOW_USER:"nitstu",
             MLFLOW_SOURCE_NAME:"test",
     }
+    mlflow.set_tracking_uri(config.MLRUNS_PATH)
 
+    # writer.set_tracking_uri(config.MLRUNS_PATH)
     EXPERIMENT_NAME = str(config.EXPERIMENT_NAME + "_" + config.MODEL_FILE)
     writer = MlflowWriter(EXPERIMENT_NAME)
+    # mlflow.set_tracking_uri(config.MLRUNS_PATH)
+
     writer.create_new_run(tags)
 
     params_dict = {
