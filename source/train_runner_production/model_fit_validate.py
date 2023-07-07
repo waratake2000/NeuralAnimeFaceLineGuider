@@ -41,6 +41,5 @@ def validate(model, dataloader, data, criterion):
             outputs = model(image)
             loss = criterion(outputs, keypoints)
             valid_running_loss += loss.item()
-            # if (epoch + 1) % 25 == 0 and i == 0:
     valid_loss = valid_running_loss / counter
     return valid_loss

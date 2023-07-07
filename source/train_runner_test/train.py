@@ -21,7 +21,7 @@ import csv
 import config
 import load_dataset
 from device_info_writer import all_device_info_csv_writer
-from record_progress_vram_information import record_progress_vram_information
+from source.tools.record_progress_vram_information import record_progress_vram_information
 from model_fit_validate import fit
 from model_fit_validate import validate
 from model_tester import model_test

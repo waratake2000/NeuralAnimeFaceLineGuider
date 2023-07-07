@@ -23,7 +23,7 @@ import csv
 import config
 import load_dataset
 from device_info_writer import all_device_info_csv_writer
-from record_progress_vram_information import record_progress_vram_information
+from source.tools.record_progress_vram_information import record_progress_vram_information
 from model_fit_validate import fit
 from model_fit_validate import validate
 from model_tester import model_test
@@ -40,6 +40,10 @@ pip_requirements = [
 ]
 
 # mlflow.pytorch.log_model("test_model", "models", pip_requirements=pip_requirements)
+
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
 
 def main():
     # start_time = time.time()
@@ -68,18 +72,7 @@ def main():
 
     # lap_times = []
 
-    # 記録データを格納するディレクトリの作成
-    # 日付と時間を年月日時分秒の形式にフォーマット
-    now = datetime.now()
-    now_str = str(now.strftime("%Y_%m%d_%H%M"))
-    info_dir_name = now_str + f"_{MODEL_FILE}"
-    print("info_dir_name",info_dir_name)
-    # ディレクトリのパスを設定 (現在のスクリプトの位置に作成)
-    # 今後記録はこのディレクトリに入れる
-    info_dir_path = os.path.join(config.ROOT_PATH, info_dir_name)
 
-    # ディレクトリを作成
-    os.makedirs(info_dir_path, exist_ok=True)
 
     # 指定のディレクトリにマシンの情報を記録する
     # all_device_info_csv_writer(f"{info_dir_path}/{now_str}_DeviceInfo.csv")
@@ -119,12 +112,25 @@ def main():
     sys.path.append('./models')
     module = importlib.import_module(MODEL_FILE)
     model = module.LandmarkDetector().to(config.DEVICE)
+    NUM_OF_PARAMS = count_parameters(model)
+    print(f"モデルのパラメータ数: {NUM_OF_PARAMS}")
 
     # 記録スタート ----------------------------------------------------------------------
+    now = datetime.now()
+    now_str = str(now.strftime("%Y_%m%d_%H%M"))
+    model_run_name = now_str + f"_{MODEL_FILE}"
+
     tags = {'trial':1,
-            MLFLOW_RUN_NAME:str(info_dir_name),
+            MLFLOW_RUN_NAME:str(model_run_name),
             MLFLOW_USER:"nitstu",
             MLFLOW_SOURCE_NAME:"test",
+            "MODEL":MODEL_FILE,
+            "NUM_OF_PARAMS":NUM_OF_PARAMS,
+            "EPOCHS":EPOCHS,
+            "BATCH_SIZE":BATCH_SIZE,
+            "LEARNING_RATE":LEARNING_RATE,
+            "DATA_AUG_FAC":DATA_AUG_FAC,
+            "IMAGE_SIZE":config.RESIZE,
     }
     mlflow.set_tracking_uri(config.MLRUNS_PATH)
 
@@ -134,47 +140,22 @@ def main():
     # mlflow.set_tracking_uri(config.MLRUNS_PATH)
 
     writer.create_new_run(tags)
+    info_dir_path = writer.artifact_uri()
+    print("artifact_url",info_dir_path)
 
     params_dict = {
         "MODEL":MODEL_FILE,
+        "NUM_OF_PARAMS":NUM_OF_PARAMS,
         "EPOCHS":EPOCHS,
         "BATCH_SIZE":BATCH_SIZE,
         "LEARNING_RATE":LEARNING_RATE,
         "DATA_AUG_FAC":DATA_AUG_FAC,
         "IMAGE_SIZE":config.RESIZE,
-        "RESULT_DATA_PATH":info_dir_path
+
     }
 
     for key,item in params_dict.items():
         writer.log_param(key, item)
-
-    # tags = {
-    #         MLFLOW_RUN_NAME:"runの名前を決められるよ",
-    #         MLFLOW_USER:"ユーザーも決められるよ",
-    #         MLFLOW_SOURCE_NAME:"ソースも決められるよ",
-    #        }
-
-    # client = MlflowClient()
-
-    # mlflow.set_tracking_uri(config.MLRUNS_PATH)
-    # experiment_id = mlflow.set_experiment("Manga109")
-    # print(experiment_id)
-
-    # mlflow.set_experiment("Manga109")
-    # experiment_id = client.create_experiment("experiment_name3")
-
-    # client.create_run(experiment_id,tags=tags)
-    # mlflow.log_artifact(info_dir_path)
-
-    # 記録スタート -----------------------------------------------------------------------
-    # with mlflow.start_run(nested=True) as run:
-    # mlflow.pytorch.log_model(model, "models")
-    # mlflow.pytorch.log_model(model, "models", pip_requirements=pip_requirements)
-
-    # for key, value in params_dict.items():
-    #     mlflow.log_param(key, value)
-
-
 
     print(model)
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
@@ -182,8 +163,6 @@ def main():
 
     train_loss = []
     val_loss = []
-
-    loss_per_50epoch = []
 
     # for epoch in range(0,int(EPOCHS)+1):
     for epoch in range(0,int(EPOCHS)+1):
@@ -213,8 +192,8 @@ def main():
 
         model_test_freq = 100
         if (epoch)  % model_test_freq == 0 and epoch != 0:
+            # 重みパラメータの保存スクリプト
             wait_data = f"model_epoch_{epoch}.pth"
-            loss_per_50epoch.append([wait_data,train_epoch_loss,val_epoch_loss])
 
             model_path = f"{info_dir_path}/models/{wait_data}"
             if not os.path.exists(f"{info_dir_path}/models"):
@@ -231,7 +210,7 @@ def main():
                 model_path
             )
 
-            # validationデータをつかってモデルのテストを行う
+            # validationデータをつかってモデルのテスト及び、テストしたvalidation画像の保存を行う
             save_valid_images_dir = f"{info_dir_path}/valid_images"
             if not os.path.exists(save_valid_images_dir):
                 os.makedirs(save_valid_images_dir)
