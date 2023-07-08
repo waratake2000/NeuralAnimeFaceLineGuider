@@ -1,0 +1,15 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/767109300687620400/46e2d807dcdc47bf80d907f0575bdb4b/artifacts
+end_time: 1688520255612
+entry_point_name: ''
+experiment_id: '767109300687620400'
+lifecycle_stage: active
+run_id: 46e2d807dcdc47bf80d907f0575bdb4b
+run_name: unruly-sheep-590
+run_uuid: 46e2d807dcdc47bf80d907f0575bdb4b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688520195598
+status: 4
+tags: []
+user_id: root

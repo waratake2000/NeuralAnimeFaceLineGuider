@@ -18,7 +18,7 @@ for data_aug_factor in [1,5,10]:
     train_data_len_divisors = division_patterns(int(training_data_coutns * data_aug_factor))
     for batch_size in train_data_len_divisors[0:6*data_aug_factor:data_aug_factor]:
         try:
-            # python3 train.py --EPOCHS 2000 --BATCH_SIZE 400 --LEARNING_RATE 0.0001 --MODEL_FILE resnet18 --DATA_AUG_FAC
+            # python3 train.py --EPOCHS 2000 --BATCH_SIZE 400 --LEARNING_RATE 0.0001 --MODEL_FILE resnet18 --DATA_AUG_FAC 1 --REPORT True
             command = ["python3", "train.py", "--EPOCHS", "20000", "--BATCH_SIZE", f"{batch_size}", "--LEARNING_RATE", "0.0001", "--MODEL_FILE", "resnet18", "--DATA_AUG_FAC", f"{data_aug_factor}","--REPORT","True"]
             subprocess.run(command)
         except:

@@ -1,0 +1,15 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/767109300687620400/07a6323f1bb145ebbf329a9ffa1984da/artifacts
+end_time: 1688520451662
+entry_point_name: ''
+experiment_id: '767109300687620400'
+lifecycle_stage: active
+run_id: 07a6323f1bb145ebbf329a9ffa1984da
+run_name: bittersweet-horse-30
+run_uuid: 07a6323f1bb145ebbf329a9ffa1984da
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688520338874
+status: 3
+tags: []
+user_id: root

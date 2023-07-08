@@ -1,0 +1,6 @@
+artifact_location: /root/source/train_runner_production/mlruns/493130339049553623
+creation_time: 1688776737607
+experiment_id: '493130339049553623'
+last_update_time: 1688776737607
+lifecycle_stage: active
+name: test_resnet18

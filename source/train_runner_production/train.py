@@ -96,9 +96,9 @@ def main():
     now_str = str(now.strftime("%Y_%m%d_%H%M"))
     model_run_name = now_str + f"_{MODEL_FILE}"
 
-    tags = {'trial':1,
+    tags = {'trial':2,
             MLFLOW_RUN_NAME:str(model_run_name),
-            MLFLOW_USER:"nitstu",
+            MLFLOW_USER:"homedev",
             MLFLOW_SOURCE_NAME:"test",
             "MODEL":MODEL_FILE,
             "NUM_OF_PARAMS":NUM_OF_PARAMS,
@@ -119,16 +119,13 @@ def main():
         "IMAGE_SIZE":config.RESIZE
     }
 
-
-
-
-
     if REPORT:
         mlflow.set_tracking_uri(config.MLRUNS_PATH)
         EXPERIMENT_NAME = str(config.EXPERIMENT_NAME + "_" + config.MODEL_FILE)
     else:
-        # mlflow.set_tracking_uri("./test/mlruns")
+        mlflow.set_tracking_uri("./mlruns/")
         EXPERIMENT_NAME = str("test" + "_" + config.MODEL_FILE)
+    print("EXPERIMENT_NAME",EXPERIMENT_NAME)
     writer = MlflowWriter(EXPERIMENT_NAME)
     writer.create_new_run(tags)
     info_dir_path = writer.artifact_uri()
@@ -212,6 +209,7 @@ def main():
             if not os.path.exists(valid_images_dir_path):
                 os.makedirs(valid_images_dir_path)
             model_test(model,model_path,f"{config.DATASET_PATH}/images",valid_image_names,f"{valid_images_dir_path}")
+    writer.set_terminated()
     print("DONE TRAINING")
 
 

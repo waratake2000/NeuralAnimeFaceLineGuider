@@ -1,0 +1,15 @@
+artifact_uri: /root/source/train_runner_production/mlruns/493130339049553623/c84fa3bbee4049489c91180b9389a394/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '493130339049553623'
+lifecycle_stage: active
+run_id: c84fa3bbee4049489c91180b9389a394
+run_name: 2023_0708_0938_resnet18
+run_uuid: c84fa3bbee4049489c91180b9389a394
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688776737608
+status: 1
+tags: []
+user_id: homedev

@@ -1,0 +1,15 @@
+artifact_uri: file:///root/source/train_runner_test/mlruns/267517970762902401/e3bcfe838784479ca3a06d635c41548f/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '267517970762902401'
+lifecycle_stage: active
+run_id: e3bcfe838784479ca3a06d635c41548f
+run_name: runの名前を決められるよ
+run_uuid: e3bcfe838784479ca3a06d635c41548f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688596620347
+status: 1
+tags: []
+user_id: ユーザーも決められるよ
