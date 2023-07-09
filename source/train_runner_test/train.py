@@ -2,7 +2,6 @@ import torch
 from torch.utils.data import DataLoader
 import torch.optim as optim
 import torch.nn as nn
-from torchinfo import summary
 
 import argparse
 import importlib
@@ -12,37 +11,30 @@ import os
 import sys
 from datetime import datetime
 import datetime as dt
-import time
 
 import mlflow
-
-import csv
+from mlflow_func import MlflowWriter
+from mlflow.utils.mlflow_tags import MLFLOW_RUN_NAME,MLFLOW_USER,MLFLOW_SOURCE_NAME
 
 import config
 import load_dataset
-from device_info_writer import all_device_info_csv_writer
-from source.tools.record_progress_vram_information import record_progress_vram_information
+import GPUtil as GPU
+import psutil
 from model_fit_validate import fit
 from model_fit_validate import validate
 from model_tester import model_test
 
-import mlflow.pytorch
-from mlflow.tracking import MlflowClient
-from mlflow.utils.mlflow_tags import MLFLOW_RUN_NAME,MLFLOW_USER,MLFLOW_SOURCE_NAME
-
 plt.style.use("ggplot")
 
 pip_requirements = [
-    'torch==1.12.1+cu113',
-    # Other pip dependencies
+    'torch==1.12.1+cu113'
 ]
 
-# mlflow.pytorch.log_model("test_model", "models", pip_requirements=pip_requirements)
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 def main():
-    # start_time = time.time()
-
-    # ex) python3 commandLIneHikisuu.py --EPOCHS 1 --BATCH_SIZE 2 --LEARNING_RATE 0.001 --MODEL_FILE "./CommonCnn.py" --DATA_AUG_FAC 3
+    # ex) python3 train.py --EPOCHS 100 --BATCH_SIZE 800 --LEARNING_RATE 0.0001 --MODEL_FILE resnet18 --DATA_AUG_FAC 0
     parser = argparse.ArgumentParser(description="このスクリプトはディープラーニングを自動で実行するためのスクリプトです")
 
     parser.add_argument("--EPOCHS", type=int, help="int: EPOCHS")
@@ -55,32 +47,15 @@ def main():
         default=0,
         help="int: Multiples of the number of images to be expanded",
     )
+    parser.add_argument("--REPORT", type=bool,default=False, help="str: do you want to report about learning processes?")
 
     args = parser.parse_args()
-
     EPOCHS = args.EPOCHS
     BATCH_SIZE = args.BATCH_SIZE
     LEARNING_RATE = args.LEARNING_RATE
     MODEL_FILE = args.MODEL_FILE
     DATA_AUG_FAC = args.DATA_AUG_FAC
-
-    # lap_times = []
-
-    # 記録データを格納するディレクトリの作成
-    # 日付と時間を年月日時分秒の形式にフォーマット
-    now = datetime.now()
-    now_str = str(now.strftime("%Y%m%d%H%M"))
-    info_dir_name = now_str + f"_{MODEL_FILE}"
-    print("info_dir_name",info_dir_name)
-    # ディレクトリのパスを設定 (現在のスクリプトの位置に作成)
-    # 今後記録はこのディレクトリに入れる
-    info_dir_path = os.path.join(config.ROOT_PATH, info_dir_name)
-
-    # ディレクトリを作成
-    os.makedirs(info_dir_path, exist_ok=True)
-
-    # 指定のディレクトリにマシンの情報を記録する
-    # all_device_info_csv_writer(f"{info_dir_path}/{now_str}_DeviceInfo.csv")
+    REPORT = args.REPORT
 
     # csvファイルを見て、トレーニングデータとバリデーションデータを分ける
     training_samples, valid_samples = load_dataset.train_test_split(
@@ -102,126 +77,139 @@ def main():
 
     train_tensor_data = load_dataset.FaceKeypointDataset(train_numpy_dataset, config.RESIZE)
     valid_tensor_data = load_dataset.FaceKeypointDataset(valid_numpy_dataset, config.RESIZE)
-    # print(train_tensor_data[0])
 
     print("train_tensor_dataの数",len(train_tensor_data))
     print("valid_tensor_dataの数",len(valid_tensor_data))
-    # NUM_OF_TRAIN_DATA = len(train_tensor_data)
-    # NUM_OF_VALID_DATA = len(valid_tensor_data)
 
     train_loader = DataLoader(train_tensor_data, batch_size=BATCH_SIZE, shuffle=True)
     valid_loader = DataLoader(valid_tensor_data, batch_size=BATCH_SIZE, shuffle=True)
 
     # モジュール内のクラスを取得
-    # FaceKeypointModel = import_class_from_file(MODEL_FILE)
     sys.path.append('./models')
     module = importlib.import_module(MODEL_FILE)
     model = module.LandmarkDetector().to(config.DEVICE)
+    NUM_OF_PARAMS = count_parameters(model)
+    print(f"モデルのパラメータ数: {NUM_OF_PARAMS}")
+
+    # 記録スタート ----------------------------------------------------------------------
+    now = datetime.now()
+    now_str = str(now.strftime("%Y_%m%d_%H%M"))
+    model_run_name = now_str + f"_{MODEL_FILE}"
+
+    tags = {'trial':2,
+            MLFLOW_RUN_NAME:str(model_run_name),
+            MLFLOW_USER:"homedev",
+            MLFLOW_SOURCE_NAME:"test",
+            "MODEL":MODEL_FILE,
+            "NUM_OF_PARAMS":NUM_OF_PARAMS,
+            "EPOCHS":EPOCHS,
+            "BATCH_SIZE":BATCH_SIZE,
+            "LEARNING_RATE":LEARNING_RATE,
+            "DATA_AUG_FAC":DATA_AUG_FAC,
+            "IMAGE_SIZE":config.RESIZE,
+    }
 
     params_dict = {
         "MODEL":MODEL_FILE,
+        "NUM_OF_PARAMS":NUM_OF_PARAMS,
         "EPOCHS":EPOCHS,
         "BATCH_SIZE":BATCH_SIZE,
         "LEARNING_RATE":LEARNING_RATE,
         "DATA_AUG_FAC":DATA_AUG_FAC,
-        "IMAGE_SIZE":config.RESIZE,
-        "RESULT_DATA_PATH":info_dir_path
+        "IMAGE_SIZE":config.RESIZE
     }
 
-    tags = {
-            MLFLOW_RUN_NAME:"runの名前を決められるよ",
-            MLFLOW_USER:"ユーザーも決められるよ",
-            MLFLOW_SOURCE_NAME:"ソースも決められるよ",
-           }
+    if REPORT:
+        mlflow.set_tracking_uri(config.MLRUNS_PATH)
+        EXPERIMENT_NAME = str(config.EXPERIMENT_NAME + "_" + config.MODEL_FILE)
+    else:
+        mlflow.set_tracking_uri("./mlruns/")
+        EXPERIMENT_NAME = str("test" + "_" + config.MODEL_FILE)
+    print("EXPERIMENT_NAME",EXPERIMENT_NAME)
+    writer = MlflowWriter(EXPERIMENT_NAME)
+    writer.create_new_run(tags)
+    info_dir_path = writer.artifact_uri()
+    print("artifact_url",info_dir_path)
+    for key,item in params_dict.items():
+        writer.log_param(key, item)
 
-    client = MlflowClient()
 
-    mlflow.set_tracking_uri(config.MLRUNS_PATH)
-    experiment_id = mlflow.set_experiment("Manga109")
-    print(experiment_id)
+    print(model)
+    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    criterion = nn.MSELoss()
 
-    # mlflow.set_experiment("Manga109")
-    # experiment_id = client.create_experiment("experiment_name3")
+    train_loss = []
+    val_loss = []
 
-    client.create_run(experiment_id,tags=tags)
-    # mlflow.log_artifact(info_dir_path)
+    for epoch in range(0,int(EPOCHS)+1):
+        # 2エポック目でgpuの様子を確認する、ついでにパラメータの数も記録しておく
+        if epoch == 2:
+            gpu = GPU.getGPUs()[0]
+            mem_info = psutil.virtual_memory()
+            used_gpu_memory = str(gpu.memoryUsed)
+            free_gpu_memory = str(gpu.memoryFree)
+            memory_percentage = str(mem_info.percent)
+            gpu_params_dict = {
+                "NUM_OF_PARAMS":NUM_OF_PARAMS,
+                "GPU_USED_MEMORY":used_gpu_memory,
+                "GPU_FREE_MEMORY":free_gpu_memory,
+                "MEMORY_PERCENTAGE":memory_percentage
+            }
+            for key,item in gpu_params_dict.items():
+                writer.log_metric(key, item)
 
-    with mlflow.start_run(nested=True) as run:
-        # mlflow.pytorch.log_model(model, "models")
-        mlflow.pytorch.log_model(model, "models", pip_requirements=pip_requirements)
+        print(f"Epoch {epoch+1} of {EPOCHS}")
+        epoch_start_time = dt.datetime.now()
 
-        for key, value in params_dict.items():
-            mlflow.log_param(key, value)
+        train_epoch_loss = fit(
+            model, train_loader, train_tensor_data, optimizer, criterion
+        )
 
-        print(model)
-        optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
-        criterion = nn.MSELoss()
+        val_epoch_loss = validate(model, valid_loader, valid_tensor_data, criterion)
+        train_loss.append(train_epoch_loss)
+        val_loss.append(val_epoch_loss)
+        print("train_loss",train_epoch_loss)
+        print("validation_loss",val_epoch_loss)
 
-        train_loss = []
-        val_loss = []
+        # ラップタイムを計算する
+        end_time = dt.datetime.now()
+        lap_time = end_time - epoch_start_time
+        print("残り推定学習時間：",lap_time * (EPOCHS - epoch))
 
-        loss_per_50epoch = []
+        writer.log_metric_step("train_loss", train_epoch_loss,step=epoch)
+        writer.log_metric_step("validation_loss", val_epoch_loss,step=epoch)
+        model_test_freq = 100
+        if (epoch)  % model_test_freq == 0 and epoch != 0:
+            # 重みパラメータの保存スクリプト
+            wait_data = f"model_epoch_{epoch}.pth"
 
-        # for epoch in range(0,int(EPOCHS)+1):
-        for epoch in range(0,int(EPOCHS)+1):
-            print(f"Epoch {epoch+1} of {EPOCHS}")
-            # 開始時刻及びフォーマット
-            epoch_start_time = dt.datetime.now()
-
-            train_epoch_loss = fit(
-                model, train_loader, train_tensor_data, optimizer, criterion
+            model_path = f"{info_dir_path}/models/{wait_data}"
+            if not os.path.exists(f"{info_dir_path}/models"):
+                os.makedirs(f"{info_dir_path}/models")
+            print(f"Train Loss: {train_epoch_loss:.4f}")
+            print(f"Val Loss: {val_epoch_loss:.4f}")
+            torch.save(
+                {
+                    "epoch": epoch,
+                    "model_state_dict": model.state_dict(),
+                    "optimizer_state_dict": optimizer.state_dict(),
+                    "loss": criterion,
+                },
+                model_path
             )
 
-            val_epoch_loss = validate(model, valid_loader, valid_tensor_data, criterion)
-            train_loss.append(train_epoch_loss)
-            val_loss.append(val_epoch_loss)
+            # validationデータをつかってモデルのテスト及び、テストしたvalidation画像の保存を行う
+            save_valid_images_dir = f"{info_dir_path}/valid_images"
+            if not os.path.exists(save_valid_images_dir):
+                os.makedirs(save_valid_images_dir)
 
-            mlflow.log_metric("train_loss", train_epoch_loss)
-            print("train_loss",train_epoch_loss)
-            mlflow.log_metric("validation_loss", val_epoch_loss)
-            print("validation_loss",val_epoch_loss)
-
-            # ラップタイムを計算する
-            end_time = dt.datetime.now()
-            lap_time = end_time - epoch_start_time
-            # print(lap_time)
-            # lap_times.append(lap_time)
-            print("残り推定学習時間：",lap_time * (EPOCHS - epoch))
-
-            model_test_freq = 100
-            if (epoch)  % model_test_freq == 0 and epoch != 0:
-                wait_data = f"model_epoch_{epoch}.pth"
-                loss_per_50epoch.append([wait_data,train_epoch_loss,val_epoch_loss])
-
-                model_path = f"{info_dir_path}/models/{wait_data}"
-                if not os.path.exists(f"{info_dir_path}/models"):
-                    os.makedirs(f"{info_dir_path}/models")
-                print(f"Train Loss: {train_epoch_loss:.4f}")
-                print(f"Val Loss: {val_epoch_loss:.4f}")
-                torch.save(
-                    {
-                        "epoch": epoch,
-                        "model_state_dict": model.state_dict(),
-                        "optimizer_state_dict": optimizer.state_dict(),
-                        "loss": criterion,
-                    },
-                    model_path
-                )
-
-                # validationデータをつかってモデルのテストを行う
-                save_valid_images_dir = f"{info_dir_path}/valid_images"
-                if not os.path.exists(save_valid_images_dir):
-                    os.makedirs(save_valid_images_dir)
-
-                valid_images_dir = f"epoch_{epoch}"
-                valid_images_dir_path = f"{save_valid_images_dir}/{valid_images_dir}"
-                if not os.path.exists(valid_images_dir_path):
-                    os.makedirs(valid_images_dir_path)
-
-                model_test(model,model_path,f"{config.DATASET_PATH}/images",valid_image_names,f"{valid_images_dir_path}")
-
-        print("DONE TRAINING")
-
+            valid_images_dir = f"epoch_{epoch}"
+            valid_images_dir_path = f"{save_valid_images_dir}/{valid_images_dir}"
+            if not os.path.exists(valid_images_dir_path):
+                os.makedirs(valid_images_dir_path)
+            model_test(model,model_path,f"{config.DATASET_PATH}/images",valid_image_names,f"{valid_images_dir_path}")
+    writer.set_terminated()
+    print("DONE TRAINING")
 
 if __name__ == "__main__":
     main()

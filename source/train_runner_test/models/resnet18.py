@@ -24,7 +24,7 @@ class BasicBlock(nn.Module):
         self,
         in_channels,
         channels,
-        stride=1
+        stride=1,
     ):
         super().__init__()
         self.conv1 = conv3x3(in_channels, channels, stride)

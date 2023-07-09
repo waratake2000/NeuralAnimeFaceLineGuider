@@ -28,3 +28,4 @@ RUN pip3 install psutil
 RUN pip3 install mlflow
 RUN pip3 install torchinfo
 RUN pip3 install omegaconf
+RUN pip3 install pretrainedmodels
