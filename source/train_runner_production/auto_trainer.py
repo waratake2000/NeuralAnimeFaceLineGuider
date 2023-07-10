@@ -18,9 +18,14 @@ training_data_coutns = len(training_samples)
 data_aug_factor = 5
 train_data_len_divisors = division_patterns(int(training_data_coutns * data_aug_factor))
 for batch_size in train_data_len_divisors[0:6*data_aug_factor:data_aug_factor]:
+<<<<<<< HEAD
     print(batch_size)
     try:
         # python3 train.py --EPOCHS 2000 --BATCH_SIZE 400 --LEARNING_RATE 0.0001 --MODEL_FILE resnet18 --DATA_AUG_FAC 1 --REPORT True
+=======
+    try:
+        # python3 train.py --EPOCHS 20000 --BATCH_SIZE 400 --LEARNING_RATE 0.0001 --MODEL_FILE resnet18 --DATA_AUG_FAC 1 --REPORT True
+>>>>>>> 4b420aa5d9edf89fa7e0f1058c29120de98a3d94
         command = ["python3", "train.py", "--EPOCHS", "20000", "--BATCH_SIZE", f"{batch_size}", "--LEARNING_RATE", "0.0001", "--MODEL_FILE", "resnet18", "--DATA_AUG_FAC", f"{data_aug_factor}","--REPORT","True"]
         subprocess.run(command)
     except:
