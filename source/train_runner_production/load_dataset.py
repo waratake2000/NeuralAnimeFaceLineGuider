@@ -53,10 +53,10 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
         seq = iaa.Sequential(
             [
                 iaa.Affine(
-                    rotate=(-80, 80),# 右、左回りに80度回転させる
-                    scale={"x": (0.5, 1.2), "y": (0.5, 1.2)},# x軸y軸それぞれずらす
+                    rotate=(-80, 80)
                 ),
                 iaa.Fliplr(0.5), # 50%の確率で画像を反転させる
+                iaa.ShearX((-10, 10))
             ]
         )
         for aug_count in range(aug_data_num-1):
