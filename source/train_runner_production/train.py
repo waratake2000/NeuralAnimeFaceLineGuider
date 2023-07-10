@@ -98,7 +98,7 @@ def main():
 
     tags = {'trial':2,
             MLFLOW_RUN_NAME:str(model_run_name),
-            MLFLOW_USER:"homedev",
+            MLFLOW_USER:"nitdev",
             MLFLOW_SOURCE_NAME:"test",
             "MODEL":MODEL_FILE,
             "NUM_OF_PARAMS":NUM_OF_PARAMS,
@@ -179,7 +179,7 @@ def main():
 
         writer.log_metric_step("train_loss", train_epoch_loss,step=epoch)
         writer.log_metric_step("validation_loss", val_epoch_loss,step=epoch)
-        model_test_freq = 100
+        model_test_freq = 300
         if (epoch)  % model_test_freq == 0 and epoch != 0:
             # 重みパラメータの保存スクリプト
             wait_data = f"model_epoch_{epoch}.pth"
