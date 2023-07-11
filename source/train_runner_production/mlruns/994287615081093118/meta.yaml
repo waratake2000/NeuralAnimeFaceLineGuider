@@ -1,0 +1,6 @@
+artifact_location: /root/source/train_runner_production/mlruns/994287615081093118
+creation_time: 1689060286886
+experiment_id: '994287615081093118'
+last_update_time: 1689060286886
+lifecycle_stage: active
+name: test_deepCNN

@@ -1,0 +1,15 @@
+artifact_uri: /root/source/train_runner_production/mlruns/994287615081093118/7729a17c9962484ebdd72621e4488e6a/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '994287615081093118'
+lifecycle_stage: active
+run_id: 7729a17c9962484ebdd72621e4488e6a
+run_name: 2023_0711_1624_deepCNN
+run_uuid: 7729a17c9962484ebdd72621e4488e6a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1689060286886
+status: 1
+tags: []
+user_id: nitdev

@@ -13,4 +13,4 @@ EXPERIMENT_NAME = "Manga109_Landmark"
 # auto_trainer.py
 EPOCHS = 20000
 LEARNING_RATE = 0.0001
-MODEL_FILE = "resnet18"
+MODEL_FILE = "deepCNN"
