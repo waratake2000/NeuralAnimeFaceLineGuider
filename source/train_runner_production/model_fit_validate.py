@@ -26,7 +26,6 @@ def fit(model, dataloader, data, optimizer, criterion):
 
 
 def validate(model, dataloader, data, criterion):
-    # print("validate")
     model.eval()
     valid_running_loss = 0.0
     counter = 0

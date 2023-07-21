@@ -21,6 +21,7 @@ core
 Cloud/
 dataset/
 .python_history
+.wget-hsts
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

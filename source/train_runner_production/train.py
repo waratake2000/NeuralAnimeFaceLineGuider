@@ -179,7 +179,7 @@ def main():
 
         writer.log_metric_step("train_loss", train_epoch_loss,step=epoch)
         writer.log_metric_step("validation_loss", val_epoch_loss,step=epoch)
-        model_test_freq = 200
+        model_test_freq = 1000
         if (epoch)  % model_test_freq == 0 and epoch != 0:
             # 重みパラメータの保存スクリプト
             wait_data = f"model_epoch_{epoch}.pth"
