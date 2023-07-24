@@ -30,7 +30,7 @@ for i in anotation_data:
     anotation_data_lists.append(i.split(" "))
 
 image_num = 0
-for image_num in range(1):
+for image_num in range(7500):
     # 入力画像の加工-------------------------------------------------------------------------------------------
     image_name = anotation_data_lists[image_num][-1].replace("\n","")
     # print(image_name)
