@@ -10,9 +10,7 @@ services:
       resources:
         reservations:
           devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+            - capabilities: [gpu]
     tty: true
     restart: always
     ports:
@@ -21,8 +19,8 @@ services:
       - "5000:5000"
     volumes:
       - ./:/root
-      - /home/dataset:/root/dataset
-      - /home/Cloud/:/root/Cloud
+      - /home/gpudev/dataset:/root/dataset
+      - /home/gpudev/Cloud/:/root/Cloud
 
     working_dir: /root
     command: ["/bin/bash"]
