@@ -1,0 +1,34 @@
+{
+    "image_name": "test.jpg",
+    "based_image": "~~~~~.jpg",
+    "landmarks": {
+        "facial_contours": [
+            [
+                1,
+                2
+            ],
+            [
+                1,
+                2
+            ],
+            [
+                1,
+                2
+            ],
+            [
+                1,
+                2
+            ]
+        ],
+        "upper_right_eyebrow": {},
+        "lower_right_eyebrow": {},
+        "upper_left_eyebrow": {},
+        "lower_left_eyebrow": {},
+        "right_eye": {},
+        "left_eye": {},
+        "nose_bridge": {},
+        "lower_nose": {},
+        "inside_lip": {},
+        "outside_lips": {}
+    }
+}
