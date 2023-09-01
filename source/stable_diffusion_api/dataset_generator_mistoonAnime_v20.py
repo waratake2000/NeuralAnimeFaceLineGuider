@@ -39,8 +39,8 @@ annotation_data_path = "/root/dataset/WFLW/WFLW_annotations/list_98pt_rect_attr_
 WFLW_images = "/root/dataset/WFLW/WFLW_images"
 
 # 生成したデータの保存先 画像&csv
-image_save_path = "/root/dataset/SD_generated_dataset/anything-v3-fp32_2/images"
-annotation_save_path = "/root/dataset/SD_generated_dataset/anything-v3-fp32_2/annotations"
+image_save_path = "/root/dataset/SD_generated_dataset/mistoonAnime_v20/images"
+annotation_save_path = "/root/dataset/SD_generated_dataset/mistoonAnime_v20/annotations"
 
 # CSVの読み込みとリスト化
 anotation_data_lists = [] # 画像データと座標データがまとめられたリスト
@@ -168,7 +168,7 @@ for image_num in load_image_num:
             width=generate_image_size[0],
             height=generate_image_size[1],
             steps=38,
-            controlnet_units=[unit2,]
+            controlnet_units=[unit2,unit1]
         )
 
         # 画像とアノテーションデータの保存-------------------------------------------------------------------
