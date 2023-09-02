@@ -1,0 +1,71 @@
+{
+    "name": "AtariDetector",
+    "bug_tracker": "",
+    "status": "annotation",
+    "labels": [
+        {
+            "name": "contour",
+            "color": "#f56872",
+            "attributes": [],
+            "type": "skeleton",
+            "sublabels": [
+                {
+                    "name": "2",
+                    "color": "#350dea",
+                    "attributes": [],
+                    "type": "points"
+                },
+                {
+                    "name": "3",
+                    "color": "#479ffe",
+                    "attributes": [],
+                    "type": "points"
+                },
+                {
+                    "name": "4",
+                    "color": "#4a649f",
+                    "attributes": [],
+                    "type": "points"
+                },
+                {
+                    "name": "5",
+                    "color": "#478144",
+                    "attributes": [],
+                    "type": "points"
+                },
+                {
+                    "name": "6",
+                    "color": "#57236b",
+                    "attributes": [],
+                    "type": "points"
+                },
+                {
+                    "name": "7",
+                    "color": "#1cdda5",
+                    "attributes": [],
+                    "type": "points"
+                },
+                {
+                    "name": "8",
+                    "color": "#e2bc6e",
+                    "attributes": [],
+                    "type": "points"
+                },
+                {
+                    "name": "9",
+                    "color": "#f067db",
+                    "attributes": [],
+                    "type": "points"
+                },
+                {
+                    "name": "1",
+                    "color": "#d12345",
+                    "attributes": [],
+                    "type": "points"
+                }
+            ],
+            "svg": "<line x1=\"76.44733428955078\" y1=\"62.49687194824219\" x2=\"79.77483367919922\" y2=\"49.1868896484375\" stroke=\"black\" data-type=\"edge\" data-node-from=\"8\" stroke-width=\"0.5\" data-node-to=\"9\"></line><line x1=\"71.01826477050781\" y1=\"73.70527648925781\" x2=\"76.44733428955078\" y2=\"62.49687194824219\" stroke=\"black\" data-type=\"edge\" data-node-from=\"7\" stroke-width=\"0.5\" data-node-to=\"8\"></line><line x1=\"63.31248474121094\" y1=\"82.98724365234375\" x2=\"71.01826477050781\" y2=\"73.70527648925781\" stroke=\"black\" data-type=\"edge\" data-node-from=\"6\" stroke-width=\"0.5\" data-node-to=\"7\"></line><line x1=\"50.703025817871094\" y1=\"93.31999206542969\" x2=\"63.31248474121094\" y2=\"82.98724365234375\" stroke=\"black\" data-type=\"edge\" data-node-from=\"5\" stroke-width=\"0.5\" data-node-to=\"6\"></line><line x1=\"39.66975021362305\" y1=\"84.73855590820312\" x2=\"50.703025817871094\" y2=\"93.31999206542969\" stroke=\"black\" data-type=\"edge\" data-node-from=\"4\" stroke-width=\"0.5\" data-node-to=\"5\"></line><line x1=\"31.263446807861328\" y1=\"75.98198699951172\" x2=\"39.66975021362305\" y2=\"84.73855590820312\" stroke=\"black\" data-type=\"edge\" data-node-from=\"3\" stroke-width=\"0.5\" data-node-to=\"4\"></line><line x1=\"25.484111785888672\" y1=\"65.64923858642578\" x2=\"31.263446807861328\" y2=\"75.98198699951172\" stroke=\"black\" data-type=\"edge\" data-node-from=\"2\" stroke-width=\"0.5\" data-node-to=\"3\"></line><line x1=\"20.580434799194336\" y1=\"51.46359634399414\" x2=\"25.484111785888672\" y2=\"65.64923858642578\" stroke=\"black\" data-type=\"edge\" data-node-from=\"1\" stroke-width=\"0.5\" data-node-to=\"2\"></line><line x1=\"20.580434799194336\" y1=\"51.46359634399414\" x2=\"79.77483367919922\" y2=\"49.1868896484375\" stroke=\"black\" data-type=\"edge\" data-node-from=\"1\" stroke-width=\"0.5\" data-node-to=\"9\"></line><circle r=\"1.5\" stroke=\"black\" fill=\"#b3b3b3\" cx=\"20.580434799194336\" cy=\"51.46359634399414\" stroke-width=\"0.1\" data-type=\"element node\" data-element-id=\"1\" data-node-id=\"1\" data-label-name=\"1\"></circle><circle r=\"1.5\" stroke=\"black\" fill=\"#b3b3b3\" cx=\"25.484111785888672\" cy=\"65.64923858642578\" stroke-width=\"0.1\" data-type=\"element node\" data-element-id=\"2\" data-node-id=\"2\" data-label-name=\"2\"></circle><circle r=\"1.5\" stroke=\"black\" fill=\"#b3b3b3\" cx=\"31.263446807861328\" cy=\"75.98198699951172\" stroke-width=\"0.1\" data-type=\"element node\" data-element-id=\"3\" data-node-id=\"3\" data-label-name=\"3\"></circle><circle r=\"1.5\" stroke=\"black\" fill=\"#b3b3b3\" cx=\"39.66975021362305\" cy=\"84.73855590820312\" stroke-width=\"0.1\" data-type=\"element node\" data-element-id=\"4\" data-node-id=\"4\" data-label-name=\"4\"></circle><circle r=\"1.5\" stroke=\"black\" fill=\"#b3b3b3\" cx=\"50.703025817871094\" cy=\"93.31999206542969\" stroke-width=\"0.1\" data-type=\"element node\" data-element-id=\"5\" data-node-id=\"5\" data-label-name=\"5\"></circle><circle r=\"1.5\" stroke=\"black\" fill=\"#b3b3b3\" cx=\"63.31248474121094\" cy=\"82.98724365234375\" stroke-width=\"0.1\" data-type=\"element node\" data-element-id=\"6\" data-node-id=\"6\" data-label-name=\"6\"></circle><circle r=\"1.5\" stroke=\"black\" fill=\"#b3b3b3\" cx=\"71.01826477050781\" cy=\"73.70527648925781\" stroke-width=\"0.1\" data-type=\"element node\" data-element-id=\"7\" data-node-id=\"7\" data-label-name=\"7\"></circle><circle r=\"1.5\" stroke=\"black\" fill=\"#b3b3b3\" cx=\"76.44733428955078\" cy=\"62.49687194824219\" stroke-width=\"0.1\" data-type=\"element node\" data-element-id=\"8\" data-node-id=\"8\" data-label-name=\"8\"></circle><circle r=\"1.5\" stroke=\"black\" fill=\"#b3b3b3\" cx=\"79.77483367919922\" cy=\"49.1868896484375\" stroke-width=\"0.1\" data-type=\"element node\" data-element-id=\"9\" data-node-id=\"9\" data-label-name=\"9\"></circle>"
+        }
+    ],
+    "version": "1.0"
+}
