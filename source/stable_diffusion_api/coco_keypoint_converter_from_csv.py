@@ -7,15 +7,13 @@ import argparse
 parser = argparse.ArgumentParser(description="stable diffsuionでデータセットを生成するためのスクリプト")
 parser.add_argument("--CSVPATH",type=str, help="str: save dir name")
 args = parser.parse_args()
-CSVPATH = args.CSVPATH
+CSVPATH = f"/root/dataset/SD_generated_dataset_checked/{args.CSVPATH}/annotations/annotations.csv"
 
 # CSVファイルの読み込み
 annotations = []
 images = []
 keypoints = []
 image_id = 1
-
-
 
 with open(CSVPATH, 'r') as f:
     reader = csv.reader(f)
