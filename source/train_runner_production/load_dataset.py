@@ -1,6 +1,7 @@
 import pandas as pd
 import cv2
 import numpy as np
+import json
 
 import imgaug as ia
 import imgaug.augmenters as iaa
@@ -11,9 +12,24 @@ from torch.utils.data import Dataset, DataLoader
 
 import config
 
+def cocokeypoints_list_converter(annotation_coco):
+    with open(annotation_coco) as f:
+        loader = json.load(f)
+    dataset_list = []
+    for image_metadata in loader["images"]:
+        one_aanotation_data = [image_metadata["file_name"]]
+        data_id = int(image_metadata["id"])
+        for anotation_data in loader["annotations"]:
+            if anotation_data['image_id'] == data_id:
+                keypoints_annotation = [keypoint for keypoint in anotation_data["keypoints"] if not keypoint == float(2)]
+                one_aanotation_data += keypoints_annotation
+                dataset_list.append(one_aanotation_data)
+    return dataset_list
 
-def train_test_split(csv_path, split):
-    df_data = pd.read_csv(csv_path, header=None)
+
+def train_test_split(annotation_list, split):
+    # df_data = pd.read_csv(annotation_list, header=None)
+    df_data = pd.DataFrame(annotation_list)
     df_data = df_data.dropna()
     len_data = len(df_data)
     valid_split = int(len_data * split)
@@ -25,21 +41,24 @@ def train_test_split(csv_path, split):
     return training_samples, valid_samples
 
 
-def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
+def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num, mix_augmentent = (3,5)):
+
     data_set_list = []
+    # data_num = 1
     for data_num in range(training_samples.shape[0]):
         image = cv2.imread(f"{data_path}/{training_samples.iloc[data_num, 0]}")
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        orig_h, orig_w, _ = image.shape
-        image = cv2.resize(image, (config.RESIZE, config.RESIZE))
-        # About keypoint
+        image_orig = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        orig_h, orig_w, _ =  image_orig.shape
+        # サイズ変更
+        image = cv2.resize(image_orig, (512, 512))
+
         keypoints = training_samples.iloc[data_num][1:]
         keypoints = np.array(keypoints, dtype="float32")
         keypoints = keypoints.reshape(-1, 2)
         keypoints_per = keypoints * [1 / (orig_w), 1 / (orig_h)]
         data_set_list.append([image, keypoints_per])
 
-        # データ拡張枚数が0枚の場合はデータ拡張の部分をスキップする
+        # print("オリジナル画像")
         if aug_data_num == 0:
             continue
 
@@ -49,20 +68,27 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
             shape=image.shape,
         )
 
-        seq = iaa.Sequential(
-            [
-                iaa.Affine(
-                    rotate=(-80, 80)
-                ),
-                iaa.Fliplr(0.5), # 50%の確率で画像を反転させる
-                iaa.ShearX((-10, 10)),
-                iaa.ShearX((-20, 20)),
-                iaa.Fliplr(0.5)
-            ]
-        )
+        seq = iaa.SomeOf(mix_augmentent, [
+            iaa.Add((-40, 40), per_channel=0.5),
+            iaa.AdditiveGaussianNoise(scale=(0, 0.2*255)),
+            iaa.Cutout(nb_iterations=(10, 70),size=0.05,cval=(0, 255),fill_per_channel=0.5),
+            iaa.JpegCompression(compression=(80, 99)),
+            iaa.BlendAlpha([0.25, 0.75], iaa.MedianBlur(13)),
+
+            iaa.Grayscale(alpha=(0.5, 1.0)),
+            iaa.LogContrast(gain=(0.6, 1.4), per_channel=True),
+            iaa.Affine(scale={"x": (0.7, 1.1), "y": (0.7, 1.1)}),
+            iaa.Affine(rotate=(-45, 45)),
+
+            iaa.Affine(translate_percent={"x": -0.20}, mode=ia.ALL, cval=(0, 255)),
+            iaa.ShearX((-20, 20)),
+            iaa.ShearY((-20, 20)),
+            iaa.PiecewiseAffine(scale=(0.03, 0.03)),
+            iaa.imgcorruptlike.Spatter(severity=2),
+            iaa.Superpixels(p_replace=0.1, n_segments=100)
+        ],random_order=True)
 
         for aug_count in range(aug_data_num-1):
-            # print("データ拡張を行います")
             image_aug, kps_aug = seq(image=image, keypoints=kps)
             keypoints = []
             for i in range(len(kps.keypoints)):
@@ -72,9 +98,9 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
             keypoints = np.array(keypoints, dtype="float32")
             keypoints_per = keypoints * [1 / (orig_w), 1 / (orig_h)]
             image_after = kps_aug.draw_on_image(image_aug, size=0)
+
             # データ拡張を行った画像をリストに格納する
             data_set_list.append([image_after, keypoints_per])
-    print("len(data_set_list)",len(data_set_list))
     return data_set_list
 
 
@@ -88,12 +114,26 @@ class FaceKeypointDataset(Dataset):
 
     def __getitem__(self, index):
         image = self.data[index][0]
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # orig_h, orig_w, _ = image.shape
+        # image = cv2.resize(image, (self.resize, self.resize))
+
+        # print(orig_h,orig_w)
         # 画素値を0~1に変換
         image = image / 255.0
         image = np.transpose(image, (2, 0, 1))
+        # print(image.shape)
         keypoints = self.data[index][1]
+        # keypoints = keypoints * [self.resize / orig_w, self.resize / orig_h]
+
+        # ランドマークの座標を画像のサイズで割ることで、割合に変換している
+        # keypoints[:, 0] *= (self.resize / orig_w)
+        # keypoints[:, 1] *= (self.resize / orig_h)
+        # print(keypoints)
+
         keypoint_data = {
             "image": torch.tensor(image, dtype=torch.float),
             "keypoints": torch.tensor(keypoints, dtype=torch.float),
         }
+
         return keypoint_data

@@ -53,7 +53,7 @@ class BasicBlock(nn.Module):
         return out
 
 class ResNet(nn.Module):
-    def __init__(self, block, layers, num_classes=120):
+    def __init__(self, block, layers, num_classes=144):
         super().__init__()
         self.in_channels = 3
         self.conv1 = nn.Conv2d(

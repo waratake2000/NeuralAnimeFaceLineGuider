@@ -25,7 +25,7 @@ from model_fit_validate import validate
 from model_tester import model_test
 
 plt.style.use("ggplot")
-
+torch.backends.cudnn.benchmark = True
 pip_requirements = [
     'torch==1.12.1+cu113'
 ]
@@ -57,9 +57,13 @@ def main():
     DATA_AUG_FAC = args.DATA_AUG_FAC
     REPORT = args.REPORT
 
+    # coco datasetのjsonファイルを読み込む
+    print(str(config.ANNOTATION_DATA))
+    annotation_list = load_dataset.cocokeypoints_list_converter(str(config.ANNOTATION_DATA))
+    print(annotation_list)
     # csvファイルを見て、トレーニングデータとバリデーションデータを分ける
     training_samples, valid_samples = load_dataset.train_test_split(
-        str(config.ANNOTATION_DATA),
+        annotation_list,
         config.TEST_SPLIT,
     )
 
@@ -179,7 +183,7 @@ def main():
 
         writer.log_metric_step("train_loss", train_epoch_loss,step=epoch)
         writer.log_metric_step("validation_loss", val_epoch_loss,step=epoch)
-        model_test_freq = 1000
+        model_test_freq = 10
         if (epoch)  % model_test_freq == 0 and epoch != 0:
             # 重みパラメータの保存スクリプト
             wait_data = f"model_epoch_{epoch}.pth"

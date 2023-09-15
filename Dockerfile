@@ -32,4 +32,4 @@ RUN pip3 install torchinfo
 RUN pip3 install omegaconf
 RUN pip3 install pretrainedmodels
 RUN pip3 install webuiapi
-
+# pip3 install mxnet-mkl==1.6.0 numpy==1.23.1
