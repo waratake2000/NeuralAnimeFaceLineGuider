@@ -49,16 +49,6 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num):
             shape=image.shape,
         )
 
-        # About Augment setting
-        # seq = iaa.Sequential(
-        #     [
-        #         iaa.Affine(
-        #             rotate=(-80, 80),# 右、左回りに80度回転させる
-        #             scale={"x": (0.5, 1.2), "y": (0.5, 1.2)},# x軸y軸それぞれずらす
-        #         ),
-        #         iaa.Fliplr(0.5), # 50%の確率で画像を反転させる
-        #     ]
-        # )
         seq = iaa.Sequential(
             [
                 iaa.Affine(

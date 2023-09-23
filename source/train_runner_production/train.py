@@ -73,10 +73,10 @@ def main():
 
     # データ拡張を行い、numpyで返す
     train_numpy_dataset = load_dataset.AugmentFaceKeypointDataset(
-        training_samples, f"{config.DATASET_PATH}/images", DATA_AUG_FAC
+        training_samples, f"{config.DATASET_PATH}", DATA_AUG_FAC
     )
     valid_numpy_dataset = load_dataset.AugmentFaceKeypointDataset(
-        valid_samples, f"{config.DATASET_PATH}/images", DATA_AUG_FAC
+        valid_samples, f"{config.DATASET_PATH}", DATA_AUG_FAC
     )
 
     train_tensor_data = load_dataset.FaceKeypointDataset(train_numpy_dataset, config.RESIZE)
@@ -183,7 +183,7 @@ def main():
 
         writer.log_metric_step("train_loss", train_epoch_loss,step=epoch)
         writer.log_metric_step("validation_loss", val_epoch_loss,step=epoch)
-        model_test_freq = 10
+        model_test_freq = 1000
         if (epoch)  % model_test_freq == 0 and epoch != 0:
             # 重みパラメータの保存スクリプト
             wait_data = f"model_epoch_{epoch}.pth"
@@ -212,7 +212,7 @@ def main():
             valid_images_dir_path = f"{save_valid_images_dir}/{valid_images_dir}"
             if not os.path.exists(valid_images_dir_path):
                 os.makedirs(valid_images_dir_path)
-            model_test(model,model_path,f"{config.DATASET_PATH}/images",valid_image_names,f"{valid_images_dir_path}")
+            model_test(model,model_path,f"{config.DATASET_PATH}",valid_image_names,f"{valid_images_dir_path}")
     writer.set_terminated()
     print("DONE TRAINING")
 

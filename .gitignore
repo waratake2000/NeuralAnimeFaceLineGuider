@@ -22,6 +22,7 @@ Cloud/
 dataset/
 .python_history
 .wget-hsts
+kaggle.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

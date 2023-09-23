@@ -31,6 +31,7 @@ def model_test(model,model_path,dataset_path,image_list,save_image_dir):
                 plt.plot(keypoints[p, 0], keypoints[p, 1], 'r.')
                 plt.text(keypoints[p, 0], keypoints[p, 1], f"{p}")
             plt.axis('off')
+            image_name = image_name.replace("images/","")
             plt.savefig(f"{save_image_dir}/valid_{image_name}")
             plt.show()
             plt.close()
