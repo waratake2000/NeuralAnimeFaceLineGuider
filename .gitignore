@@ -23,8 +23,8 @@ dataset/
 .python_history
 .wget-hsts
 kaggle.json
-
-# Byte-compiled / optimized / DLL files
+experiment-1-resnet18.log
+#Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
