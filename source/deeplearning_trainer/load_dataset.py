@@ -11,6 +11,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 
 import config
+import os
 
 def cocokeypoints_list_converter(annotation_coco):
     with open(annotation_coco) as f:
@@ -42,13 +43,26 @@ def train_test_split(annotation_list, split):
 
 
 def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num, mix_augmentent = (2,4)):
+    print("data_path")
+    print(data_path)
+
     data_set_list = []
     resize_seq = iaa.Resize({"height": config.RESIZE, "width": config.RESIZE})
     flip_sea = iaa.Fliplr(p=0.5)
     total_data_count = int(training_samples.shape[0]) * int(aug_data_num)
 
+
     for data_num in range(training_samples.shape[0]):
-        image = cv2.imread(f"{data_path}/{training_samples.iloc[data_num, 0]}")
+        image = None
+        for i in data_path:
+            print(f"{i}/{training_samples.iloc[data_num, 0]}")
+            if(os.path.isfile(f"{i}/{training_samples.iloc[data_num, 0]}")):
+                image = cv2.imread(f"{i}/{training_samples.iloc[data_num, 0]}")
+            else:
+                continue
+
+        print("image")
+        print(image)
         image_orig = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         orig_h, orig_w, _ =  image_orig.shape
         # サイズ変更
@@ -61,36 +75,36 @@ def AugmentFaceKeypointDataset(training_samples, data_path, aug_data_num, mix_au
         landmark_num = len(keypoints)
 
         # 白黒
-        seq = iaa.SomeOf(mix_augmentent,[
-            iaa.AdditiveGaussianNoise(scale=(0, 0.2*255)),
-            iaa.Cutout(nb_iterations=(10, 35),size=0.05,cval=(0, 0),fill_per_channel=0.5),
-            iaa.Cutout(nb_iterations=(10, 35),size=0.05,cval=(255,255),fill_per_channel=0.5),
-
-            iaa.Affine(scale={"x": (0.7, 1.1), "y": (0.7, 1.1)}),
-            iaa.Affine(rotate=(-45, 45)),
-
-            iaa.ShearX((-30, 30)),
-            iaa.ShearY((-30, 30)),
-            iaa.PiecewiseAffine(scale=(0.03, 0.03))
-        ],random_order=True)
-
-        # カラー
-        # seq = iaa.SomeOf(mix_augmentent, [
-        #     iaa.Invert(1,per_channel=1),
-        #     iaa.Add((-40, 40), per_channel=0.5),
+        # seq = iaa.SomeOf(mix_augmentent,[
         #     iaa.AdditiveGaussianNoise(scale=(0, 0.2*255)),
-        #     iaa.Cutout(nb_iterations=(10, 40),size=0.05,cval=(0, 255),fill_per_channel=0.5),
-        #     iaa.BlendAlpha([0.25, 0.75], iaa.MedianBlur(13)),
+        #     iaa.Cutout(nb_iterations=(10, 35),size=0.05,cval=(0, 0),fill_per_channel=0.5),
+        #     iaa.Cutout(nb_iterations=(10, 35),size=0.05,cval=(255,255),fill_per_channel=0.5),
 
-        #     iaa.Grayscale(alpha=(0.5, 1.0)),
-        #     iaa.LogContrast(gain=(0.6, 1.4), per_channel=True),
         #     iaa.Affine(scale={"x": (0.7, 1.1), "y": (0.7, 1.1)}),
         #     iaa.Affine(rotate=(-45, 45)),
 
-        #     iaa.Affine(translate_percent={"x": -0.20}, mode=ia.ALL, cval=(0, 255)),
-        #     iaa.ShearX((-20, 20)),
-        #     iaa.ShearY((-20, 20))
+        #     iaa.ShearX((-30, 30)),
+        #     iaa.ShearY((-30, 30)),
+        #     iaa.PiecewiseAffine(scale=(0.03, 0.03))
         # ],random_order=True)
+
+        # カラー
+        seq = iaa.SomeOf(mix_augmentent, [
+            iaa.Invert(1,per_channel=1),
+            iaa.Add((-40, 40), per_channel=0.5),
+            iaa.AdditiveGaussianNoise(scale=(0, 0.2*255)),
+            iaa.Cutout(nb_iterations=(10, 40),size=0.05,cval=(0, 255),fill_per_channel=0.5),
+            iaa.BlendAlpha([0.25, 0.75], iaa.MedianBlur(13)),
+
+            iaa.Grayscale(alpha=(0.5, 1.0)),
+            iaa.LogContrast(gain=(0.6, 1.4), per_channel=True),
+            iaa.Affine(scale={"x": (0.7, 1.1), "y": (0.7, 1.1)}),
+            iaa.Affine(rotate=(-45, 45)),
+
+            iaa.Affine(translate_percent={"x": -0.20}, mode=ia.ALL, cval=(0, 255)),
+            iaa.ShearX((-20, 20)),
+            iaa.ShearY((-20, 20))
+        ],random_order=True)
 
         kps = KeypointsOnImage(
             [Keypoint(x=keypoints[i][0], y=keypoints[i][1]) for i in range(0,landmark_num)],

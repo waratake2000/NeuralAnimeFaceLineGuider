@@ -16,6 +16,7 @@ valid_images/
 .ipython/
 .local/
 nohup.out
+.lesshst
 core
 *.pth
 Cloud/

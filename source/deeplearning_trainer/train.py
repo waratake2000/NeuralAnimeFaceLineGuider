@@ -1,4 +1,4 @@
-# nohup python3 train.py --EPOCHS 10000 --BATCH_SIZE 128 --LEARNING_RATE 0.0001 --MODEL_FILE resnet18 --DATA_AUG_FAC 1 --REPORT True --DEVICE 0 > experiment-1-resnet18.log 2>&1 &
+# nohup python3 train.py --EPOCHS 10000 --BATCH_SIZE 128 --LEARNING_RATE 0.0001 --MODEL_FILE resnet --DATA_AUG_FAC 5 --REPORT True --DEVICE 0 > experiment-20231015-resnet101.log 2>&1 &
 
 import torch
 from torch.utils.data import DataLoader
@@ -65,7 +65,20 @@ def main():
     DEVICE = torch.device(f'cuda:{DEVICE}' if torch.cuda.is_available() else 'cpu')
 
     # coco datasetのjsonファイルを読み込む
-    annotation_list = load_dataset.cocokeypoints_list_converter(str(config.ANNOTATION_DATA))
+    annotation_list = []
+    for i in config.ANNOTATION_DATA:
+        annotation_list += load_dataset.cocokeypoints_list_converter(str(i))
+
+
+    print("len(annotation_list)",len(annotation_list))
+    print("annotation_list: ")
+    print("type(annotation_list): ",type(annotation_list))
+    print("len(annotation_list): ",len(annotation_list))
+
+    # for i in annotation_list[0:10]:
+    #     print(i)
+
+
     # csvファイルを見て、トレーニングデータとバリデーションデータを分ける
     training_samples, valid_samples = load_dataset.train_test_split(
         annotation_list,
@@ -77,18 +90,29 @@ def main():
     valid_image_names = [name for name in valid_image_names_df]
 
     # データ拡張を行い、numpyで返す
-    train_numpy_dataset = load_dataset.AugmentFaceKeypointDataset(
-        training_samples, f"{config.DATASET_PATH}", DATA_AUG_FAC
-    )
-    valid_numpy_dataset = load_dataset.AugmentFaceKeypointDataset(
-        valid_samples, f"{config.DATASET_PATH}", DATA_AUG_FAC
-    )
+    # train_numpy_dataset = []
+    # valid_numpy_dataset = []
+    # print("データ拡張を行い、numpyで返す")
+    # for i in config.DATASET_PATH:
+    #     print(i)
+    #     try:
+    #         train_numpy_dataset.append(load_dataset.AugmentFaceKeypointDataset(training_samples, f"{i}", DATA_AUG_FAC))
+    #         valid_numpy_dataset.append(load_dataset.AugmentFaceKeypointDataset(valid_samples, f"{i}", DATA_AUG_FAC))
+    #     except:
+    #         continue
+
+    # /root/dataset/anime_face_landmark_20230912/images/images/AnythingV5Ink_gitv1.5.4_0901_140034_2.jpg
+    train_numpy_dataset = load_dataset.AugmentFaceKeypointDataset(training_samples, config.DATASET_PATH, DATA_AUG_FAC)
+    valid_numpy_dataset = load_dataset.AugmentFaceKeypointDataset(valid_samples, config.DATASET_PATH, DATA_AUG_FAC)
 
     train_tensor_data = load_dataset.FaceKeypointDataset(train_numpy_dataset, config.RESIZE)
+
     valid_tensor_data = load_dataset.FaceKeypointDataset(valid_numpy_dataset, config.RESIZE)
 
-    print("train_tensor_dataの数",len(train_tensor_data))
-    print("valid_tensor_dataの数",len(valid_tensor_data))
+    # print("train_tensor_dataの数",len(train_tensor_data))
+    # print("train_tensor_data",train_tensor_data)
+    # print("len(train_tensor_data)",len(train_tensor_data))
+    # print("valid_tensor_dataの数",len(valid_tensor_data))
 
     train_loader = DataLoader(train_tensor_data, batch_size=BATCH_SIZE, shuffle=True)
     valid_loader = DataLoader(valid_tensor_data, batch_size=BATCH_SIZE, shuffle=True)
@@ -99,6 +123,8 @@ def main():
     model = module.LandmarkDetector().to(DEVICE)
     NUM_OF_PARAMS = count_parameters(model)
     print(f"モデルのパラメータ数: {NUM_OF_PARAMS}")
+
+    # return 0
 
     # 記録スタート ----------------------------------------------------------------------
     now = datetime.now()
@@ -149,6 +175,8 @@ def main():
 
     train_loss = []
     val_loss = []
+
+    torch.cuda.empty_cache()
 
     # for epoch in range(0,int(EPOCHS)+1):
     for epoch in range(0,int(EPOCHS)+1):
@@ -217,7 +245,7 @@ def main():
             valid_images_dir_path = f"{save_valid_images_dir}/{valid_images_dir}"
             if not os.path.exists(valid_images_dir_path):
                 os.makedirs(valid_images_dir_path)
-            model_test(model,model_path,f"{config.DATASET_PATH}",valid_image_names,f"{valid_images_dir_path}",DEVICE)
+            model_test(model,model_path,config.DATASET_PATH,valid_image_names,f"{valid_images_dir_path}",DEVICE)
     writer.set_terminated()
     print("DONE TRAINING")
 
